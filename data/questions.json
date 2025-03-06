@@ -1,0 +1,51 @@
+[
+    {
+        "question": "What is the capital of France?",
+        "answers": ["Paris", "London", "Berlin", "Madrid"],
+        "correct": ["A"],
+        "category": "Geography",
+        "difficulty": "Easy"
+    },
+    {
+        "question": "What is the capital of Germany?",
+        "answers": ["Paris", "London", "Berlin", "Madrid"],
+        "correct": ["C"],
+        "category": "Geography",
+        "difficulty": "Medium"
+    },
+    {
+        "question": "What is 1 + 1?",
+        "answers": ["1", "2", "3", "4"],
+        "correct": ["B"],
+        "category": "Mathematics",
+        "difficulty": "Hard"
+    },
+    {
+        "question": "Who is the king of the Spanish kingdom?",
+        "answers": ["Felipe VI", "Juan Carlos I", "Leonor", "Sofía"],
+        "correct": ["A"],
+        "category": "History",
+        "difficulty": "Medium"
+    },
+    {
+        "question": "The result of 2 + 2 is:",
+        "answers": ["3", "4", "5", "6"],
+        "correct": ["B"],
+        "category": "Mathematics",
+        "difficulty": "Hard"
+    },
+    {
+        "question": "Independece Day of the United States is celebrated on:",
+        "answers": ["July 4", "July 14", "June 4", "June 14"],
+        "correct": ["A"],
+        "category": "History",
+        "difficulty": "Easy"
+    },
+    {
+        "question": "What is the capital of Spain?",
+        "answers": ["Paris", "London", "Berlin", "Madrid"],
+        "correct": ["D"],
+        "category": "Geography",
+        "difficulty": "Hard"
+    }
+]
