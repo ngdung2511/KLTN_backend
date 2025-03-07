@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from mvc.view.test_bank import TestRequest
-from mvc.model import test_bank
+from ..view.test_bank import TestRequest
+from ..model import test_bank
 
 router = APIRouter(prefix="/test_bank", tags=["test_bank"])
 

@@ -1,6 +1,6 @@
 from typing import List, Union
 import pymongo
-from mvc.view.question_bank import Question
+from ..view.question_bank import Question
 from bson import ObjectId
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")

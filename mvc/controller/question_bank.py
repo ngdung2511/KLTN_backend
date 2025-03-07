@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, UploadFile
-from mvc.model import question_bank
-from mvc.view.question_bank import Question 
+from ..model import question_bank
+from ..view.question_bank import Question 
 from datetime import datetime
 import pandas as pd
 

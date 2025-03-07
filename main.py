@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from mvc.controller import question_bank, test_bank
+from .mvc.controller import question_bank, test_bank
 
 app = FastAPI()
 

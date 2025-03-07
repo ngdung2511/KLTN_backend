@@ -1,8 +1,8 @@
 from typing import List, Union
 import pymongo
-from mvc.view.test_bank import TestRequest, TestResponse
+from ..view.test_bank import TestRequest, TestResponse
 from bson import ObjectId
-from mvc.view.question_bank import Question
+from ..view.question_bank import Question
 import datetime
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")

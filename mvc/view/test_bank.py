@@ -2,7 +2,7 @@ from typing import Annotated, List, Optional, Union
 from pydantic import BaseModel, BeforeValidator, Field
 from bson import ObjectId
 from datetime import datetime
-from mvc.view.question_bank import Question
+from .question_bank import Question
 
 class TestRequest(BaseModel):
     id: Optional[Annotated[str, BeforeValidator(str)]] = Field(alias="_id", default = None)
