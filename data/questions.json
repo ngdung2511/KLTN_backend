@@ -8,7 +8,7 @@
             "optionD": "<p>Madrid</p>"
         },
         "correctOptions": ["A"],
-        "category_id": "67c86fd31c35282cca94fbad",
+        "category_id": "67cc1cf12c007149d45165cf",
         "difficulty": "Easy"
     },
     {
@@ -20,7 +20,7 @@
             "optionD": "<p>Australia</p>"
         },
         "correctOptions": ["C"],
-        "category_id": "67c86fd31c35282cca94fbad",
+        "category_id": "67cc1cf12c007149d45165cf",
         "difficulty": "Medium"
     },
     {
@@ -32,7 +32,7 @@
             "optionD": "<p>Australia</p>"
         },
         "correctOptions": ["B"],
-        "category_id": "67c86fd31c35282cca94fbad",
+        "category_id": "67cc1cf12c007149d45165cf",
         "difficulty": "Hard"
     },
     {
@@ -44,7 +44,7 @@
             "optionD": "<p>Abraham Lincoln</p>"
         },
         "correctOptions": ["A"],
-        "category_id": "67c86fd31c35282cca94fbac",
+        "category_id": "67cc1cf12c007149d45165ce",
         "difficulty": "Easy"
     },
     {
@@ -56,7 +56,7 @@
             "optionD": "<p>1939</p>"
         },
         "correctOptions": ["B"],
-        "category_id": "67c86fd31c35282cca94fbac",
+        "category_id": "67cc1cf12c007149d45165ce",
         "difficulty": "Medium"
     },
     {
@@ -68,7 +68,7 @@
             "optionD": "<p>Mao Zedong</p>"
         },
         "correctOptions": ["A"],
-        "category_id": "67c86fd31c35282cca94fbac",
+        "category_id": "67cc1cf12c007149d45165ce",
         "difficulty": "Hard"
     },
     {
@@ -80,7 +80,7 @@
             "optionD": "<p>6</p>"
         },
         "correctOptions": ["B"],
-        "category_id": "67c86fd31c35282cca94fba7",
+        "category_id": "67cc1cf12c007149d45165c9",
         "difficulty": "Easy"
     },
     {
@@ -92,7 +92,7 @@
             "optionD": "<p>80°</p>"
         },
         "correctOptions": ["B"],
-        "category_id": "67c86fd31c35282cca94fba7",
+        "category_id": "67cc1cf12c007149d45165c9",
         "difficulty": "Medium"
     },
     {
@@ -104,7 +104,7 @@
             "optionD": "<p>1</p>"
         },
         "correctOptions": ["A"],
-        "category_id": "67c86fd31c35282cca94fba7",
+        "category_id": "67cc1cf12c007149d45165c9",
         "difficulty": "Hard"
     },
     {
@@ -116,7 +116,7 @@
             "optionD": "<p>Mississippi River</p>"
         },
         "correctOptions": ["B"],
-        "category_id": "67c86fd31c35282cca94fbad",
+        "category_id": "67cc1cf12c007149d45165cf",
         "difficulty": "Easy"
     },
     {
@@ -128,7 +128,7 @@
             "optionD": "<p>Brazil</p>"
         },
         "correctOptions": ["C"],
-        "category_id": "67c86fd31c35282cca94fbad",
+        "category_id": "67cc1cf12c007149d45165cf",
         "difficulty": "Medium"
     },
     {
@@ -140,7 +140,7 @@
             "optionD": "<p>James Cook</p>"
         },
         "correctOptions": ["A"],
-        "category_id": "67c86fd31c35282cca94fbac",
+        "category_id": "67cc1cf12c007149d45165ce",
         "difficulty": "Easy"
     },
     {
@@ -152,7 +152,7 @@
             "optionD": "<p>John Glenn</p>"
         },
         "correctOptions": ["B"],
-        "category_id": "67c86fd31c35282cca94fbac",
+        "category_id": "67cc1cf12c007149d45165ce",
         "difficulty": "Medium"
     },
     {
@@ -164,7 +164,7 @@
             "optionD": "<p>Vietnam War</p>"
         },
         "correctOptions": ["C"],
-        "category_id": "67c86fd31c35282cca94fbac",
+        "category_id": "67cc1cf12c007149d45165ce",
         "difficulty": "Hard"
     },
     {
@@ -176,7 +176,7 @@
             "optionD": "<p>9</p>"
         },
         "correctOptions": ["C"],
-        "category_id": "67c86fd31c35282cca94fba7",
+        "category_id": "67cc1cf12c007149d45165c9",
         "difficulty": "Easy"
     },
     {
@@ -188,7 +188,7 @@
             "optionD": "<p>2</p>"
         },
         "correctOptions": ["C"],
-        "category_id": "67c86fd31c35282cca94fba7",
+        "category_id": "67cc1cf12c007149d45165c9",
         "difficulty": "Medium"
     },
     {
@@ -200,7 +200,7 @@
             "optionD": "<p>x^2 + C</p>"
         },
         "correctOptions": ["D"],
-        "category_id": "67c86fd31c35282cca94fba7",
+        "category_id": "67cc1cf12c007149d45165c9",
         "difficulty": "Hard"
     }
 ]
