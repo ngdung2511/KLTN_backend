@@ -35,11 +35,11 @@ async def import_file(file: UploadFile):
     questions = []
     for _, row in df.iterrows():
         question = Question(
-            question=row["question"],
-            answers=row["answers"],
-            correct=row["correct"],
-            difficulty=row["difficulty"],
             category=row["category"],
+            content=row["content"],
+            lstOptions=row["lstOptions"],
+            correctOptions=row["correctOptions"],
+            difficulty=row["difficulty"],
             status=True,
             created_at=datetime.now(),
             updated_at=datetime.now()

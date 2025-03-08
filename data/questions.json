@@ -1,51 +1,206 @@
 [
     {
-        "question": "What is the capital of France?",
-        "answers": ["Paris", "London", "Berlin", "Madrid"],
-        "correct": ["A"],
+        "content": "<p>What is the capital of France?</p>",
+        "lstOptions": {
+            "optionA": "<p>Paris</p>",
+            "optionB": "<p>London</p>",
+            "optionC": "<p>Berlin</p>",
+            "optionD": "<p>Madrid</p>"
+        },
+        "correctOptions": ["A"],
         "category": "Geography",
         "difficulty": "Easy"
     },
     {
-        "question": "What is the capital of Germany?",
-        "answers": ["Paris", "London", "Berlin", "Madrid"],
-        "correct": ["C"],
+        "content": "<p>Which continent is the Sahara Desert located in?</p>",
+        "lstOptions": {
+            "optionA": "<p>Asia</p>",
+            "optionB": "<p>South America</p>",
+            "optionC": "<p>Africa</p>",
+            "optionD": "<p>Australia</p>"
+        },
+        "correctOptions": ["C"],
         "category": "Geography",
         "difficulty": "Medium"
     },
     {
-        "question": "What is 1 + 1?",
-        "answers": ["1", "2", "3", "4"],
-        "correct": ["B"],
-        "category": "Mathematics",
+        "content": "<p>Which country has the longest coastline in the world?</p>",
+        "lstOptions": {
+            "optionA": "<p>USA</p>",
+            "optionB": "<p>Canada</p>",
+            "optionC": "<p>Russia</p>",
+            "optionD": "<p>Australia</p>"
+        },
+        "correctOptions": ["B"],
+        "category": "Geography",
         "difficulty": "Hard"
     },
     {
-        "question": "Who is the king of the Spanish kingdom?",
-        "answers": ["Felipe VI", "Juan Carlos I", "Leonor", "Sofía"],
-        "correct": ["A"],
-        "category": "History",
-        "difficulty": "Medium"
-    },
-    {
-        "question": "The result of 2 + 2 is:",
-        "answers": ["3", "4", "5", "6"],
-        "correct": ["B"],
-        "category": "Mathematics",
-        "difficulty": "Hard"
-    },
-    {
-        "question": "Independece Day of the United States is celebrated on:",
-        "answers": ["July 4", "July 14", "June 4", "June 14"],
-        "correct": ["A"],
+        "content": "<p>Who was the first President of the United States?</p>",
+        "lstOptions": {
+            "optionA": "<p>George Washington</p>",
+            "optionB": "<p>Thomas Jefferson</p>",
+            "optionC": "<p>John Adams</p>",
+            "optionD": "<p>Abraham Lincoln</p>"
+        },
+        "correctOptions": ["A"],
         "category": "History",
         "difficulty": "Easy"
     },
     {
-        "question": "What is the capital of Spain?",
-        "answers": ["Paris", "London", "Berlin", "Madrid"],
-        "correct": ["D"],
+        "content": "<p>In which year did World War II end?</p>",
+        "lstOptions": {
+            "optionA": "<p>1940</p>",
+            "optionB": "<p>1945</p>",
+            "optionC": "<p>1950</p>",
+            "optionD": "<p>1939</p>"
+        },
+        "correctOptions": ["B"],
+        "category": "History",
+        "difficulty": "Medium"
+    },
+    {
+        "content": "<p>Who was the first emperor of China?</p>",
+        "lstOptions": {
+            "optionA": "<p>Qin Shi Huang</p>",
+            "optionB": "<p>Sun Yat-sen</p>",
+            "optionC": "<p>Kublai Khan</p>",
+            "optionD": "<p>Mao Zedong</p>"
+        },
+        "correctOptions": ["A"],
+        "category": "History",
+        "difficulty": "Hard"
+    },
+    {
+        "content": "<p>What is 5 + 3?</p>",
+        "lstOptions": {
+            "optionA": "<p>7</p>",
+            "optionB": "<p>8</p>",
+            "optionC": "<p>9</p>",
+            "optionD": "<p>6</p>"
+        },
+        "correctOptions": ["B"],
+        "category": "Mathematics",
+        "difficulty": "Easy"
+    },
+    {
+        "content": "<p>If a triangle has angles of 30° and 60°, what is the third angle?</p>",
+        "lstOptions": {
+            "optionA": "<p>60°</p>",
+            "optionB": "<p>90°</p>",
+            "optionC": "<p>120°</p>",
+            "optionD": "<p>80°</p>"
+        },
+        "correctOptions": ["B"],
+        "category": "Mathematics",
+        "difficulty": "Medium"
+    },
+    {
+        "content": "<p>What is the derivative of x^2?</p>",
+        "lstOptions": {
+            "optionA": "<p>2x</p>",
+            "optionB": "<p>x</p>",
+            "optionC": "<p>x^3</p>",
+            "optionD": "<p>1</p>"
+        },
+        "correctOptions": ["A"],
+        "category": "Mathematics",
+        "difficulty": "Hard"
+    },
+    {
+        "content": "<p>Which river is the longest in the world?</p>",
+        "lstOptions": {
+            "optionA": "<p>Amazon River</p>",
+            "optionB": "<p>Nile River</p>",
+            "optionC": "<p>Yangtze River</p>",
+            "optionD": "<p>Mississippi River</p>"
+        },
+        "correctOptions": ["B"],
         "category": "Geography",
+        "difficulty": "Easy"
+    },
+    {
+        "content": "<p>Which country has the largest population?</p>",
+        "lstOptions": {
+            "optionA": "<p>India</p>",
+            "optionB": "<p>USA</p>",
+            "optionC": "<p>China</p>",
+            "optionD": "<p>Brazil</p>"
+        },
+        "correctOptions": ["C"],
+        "category": "Geography",
+        "difficulty": "Medium"
+    },
+    {
+        "content": "<p>Who discovered America?</p>",
+        "lstOptions": {
+            "optionA": "<p>Christopher Columbus</p>",
+            "optionB": "<p>Leif Erikson</p>",
+            "optionC": "<p>Amerigo Vespucci</p>",
+            "optionD": "<p>James Cook</p>"
+        },
+        "correctOptions": ["A"],
+        "category": "History",
+        "difficulty": "Easy"
+    },
+    {
+        "content": "<p>Who was the first person to walk on the moon?</p>",
+        "lstOptions": {
+            "optionA": "<p>Buzz Aldrin</p>",
+            "optionB": "<p>Neil Armstrong</p>",
+            "optionC": "<p>Yuri Gagarin</p>",
+            "optionD": "<p>John Glenn</p>"
+        },
+        "correctOptions": ["B"],
+        "category": "History",
+        "difficulty": "Medium"
+    },
+    {
+        "content": "<p>Which war ended in 1865 in the United States?</p>",
+        "lstOptions": {
+            "optionA": "<p>World War I</p>",
+            "optionB": "<p>World War II</p>",
+            "optionC": "<p>American Civil War</p>",
+            "optionD": "<p>Vietnam War</p>"
+        },
+        "correctOptions": ["C"],
+        "category": "History",
+        "difficulty": "Hard"
+    },
+    {
+        "content": "<p>What is the square root of 64?</p>",
+        "lstOptions": {
+            "optionA": "<p>6</p>",
+            "optionB": "<p>7</p>",
+            "optionC": "<p>8</p>",
+            "optionD": "<p>9</p>"
+        },
+        "correctOptions": ["C"],
+        "category": "Mathematics",
+        "difficulty": "Easy"
+    },
+    {
+        "content": "<p>Solve for x: 2x + 3 = 9</p>",
+        "lstOptions": {
+            "optionA": "<p>3</p>",
+            "optionB": "<p>6</p>",
+            "optionC": "<p>4</p>",
+            "optionD": "<p>2</p>"
+        },
+        "correctOptions": ["C"],
+        "category": "Mathematics",
+        "difficulty": "Medium"
+    },
+    {
+        "content": "<p>What is the integral of 2x?</p>",
+        "lstOptions": {
+            "optionA": "<p>x^2</p>",
+            "optionB": "<p>2x^2</p>",
+            "optionC": "<p>2x + C</p>",
+            "optionD": "<p>x^2 + C</p>"
+        },
+        "correctOptions": ["D"],
+        "category": "Mathematics",
         "difficulty": "Hard"
     }
 ]

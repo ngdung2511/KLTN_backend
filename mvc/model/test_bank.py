@@ -34,8 +34,8 @@ def auto_create_test(category: str, hardQuestionCount: int, easyQuestionCount: i
     questions = sorted(questions, key=lambda x: custom_order.index(x["difficulty"]))
     questions = [Question(**q) for q in questions]
     
-    test_response = TestResponse(title=f"Test on {category}", description=f"Test on {category} for SS1 students", subject=category, questions =questions, status=True, created_at=datetime.datetime.now(), updated_at=datetime.datetime.now())
-    test_request = TestRequest(title=f"Test on {category}", description=f"Test on {category} for SS1 students", subject=category, questions_id=[str(q.id) for q in questions], status=True, created_at=datetime.datetime.now(), updated_at=datetime.datetime.now())
+    test_response = TestResponse(title=f"Test on {category}", description=f"Test on {category} for SS1 students", category=category, lstQuestions=questions, status=True, created_at=datetime.datetime.now(), updated_at=datetime.datetime.now())
+    test_request = TestRequest(title=f"Test on {category}", description=f"Test on {category} for SS1 students", category=category, lstQuestions_id=[str(q.id) for q in questions], status=True, created_at=datetime.datetime.now(), updated_at=datetime.datetime.now())
 
     result = insert_test(test_request)
     test_response.id = str(result.inserted_id)
@@ -56,9 +56,9 @@ def search_by_name(name: str):
         },
         {
             "$addFields": {  
-                "questions_id": {
+                "lstQuestions_id": {
                     "$map": {
-                        "input": "$questions_id",
+                        "input": "$lstQuestions_id",
                         "as": "id",
                         "in": { "$toObjectId": "$$id" } 
                     }
@@ -67,14 +67,14 @@ def search_by_name(name: str):
         },
         {
             "$lookup": {
-                "from": "questions",
-                "localField": "questions_id",
+                "from": "lstQuestions",
+                "localField": "lstQuestions_id",
                 "foreignField": "_id",
-                "as": "questions"
+                "as": "lstQuestions"
             }
         },
         {
-            "$unset": "questions_id"
+            "$unset": "lstQuestions_id"
         }
     ]
     items = list(test_collection.aggregate(pipeline))

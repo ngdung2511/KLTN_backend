@@ -1,13 +1,13 @@
-from typing import Annotated, List, Optional
+from typing import Annotated, Dict, List, Optional
 from pydantic import BaseModel, BeforeValidator, Field
 from bson import ObjectId
 from datetime import datetime
 
 class Question(BaseModel):
     id: Optional[Annotated[str, BeforeValidator(str)]] = Field(alias="_id", default = None)
-    question: str
-    answers: List[str]
-    correct: List[str]
+    content: str
+    lstOptions: Dict[str, str]
+    correctOptions: List[str]
     difficulty: str
     category: str
     status: bool = Field(default=True, description="True if question is active, False if question is deleted")
@@ -15,13 +15,18 @@ class Question(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.now)
 
     model_config = {
-        "json_schema_extra": {
-            "example": {
-                "question": "What is the capital of Nigeria?",
-                "answers": ["Lagos", "Abuja", "Kano", "Ibadan"],
-                "correct": ["B"],
-                "difficulty": "Easy",
-                "category": "Geography",
+    "json_schema_extra": {
+        "example": {
+            "content": "<p>What is the capital of France?</p>",
+            "lstOptions": {
+                "optionA": "<p>Paris</p>",
+                "optionB": "<p>London</p>",
+                "optionC": "<p>Berlin</p>",
+                "optionD": "<p>Madrid</p>"
+            },
+            "correctOptions": ["A"],
+            "category": "Geography",
+            "difficulty": "Easy"
         }
     }
 }
