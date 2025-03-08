@@ -10,8 +10,8 @@ async def create_test(test: TestRequest):
     return {"message": "Test created successfully"}
 
 @router.post("/create-auto")
-async def create_test_auto(category: str, hardQuestionCount: int, easyQuestionCount: int, mediumQuestionCount: int):
-    results = test_bank.auto_create_test(category, hardQuestionCount, easyQuestionCount, mediumQuestionCount)
+async def create_test_auto(category_id: str, hardQuestionCount: int, easyQuestionCount: int, mediumQuestionCount: int):
+    results = test_bank.auto_create_test(category_id, hardQuestionCount, easyQuestionCount, mediumQuestionCount)
     if isinstance(results, dict):
         raise HTTPException(status_code=400, detail=results["message"])
     return results

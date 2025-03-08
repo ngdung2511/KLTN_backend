@@ -8,7 +8,7 @@
             "optionD": "<p>Madrid</p>"
         },
         "correctOptions": ["A"],
-        "category": "Geography",
+        "category_id": "67c86fd31c35282cca94fbad",
         "difficulty": "Easy"
     },
     {
@@ -20,7 +20,7 @@
             "optionD": "<p>Australia</p>"
         },
         "correctOptions": ["C"],
-        "category": "Geography",
+        "category_id": "67c86fd31c35282cca94fbad",
         "difficulty": "Medium"
     },
     {
@@ -32,7 +32,7 @@
             "optionD": "<p>Australia</p>"
         },
         "correctOptions": ["B"],
-        "category": "Geography",
+        "category_id": "67c86fd31c35282cca94fbad",
         "difficulty": "Hard"
     },
     {
@@ -44,7 +44,7 @@
             "optionD": "<p>Abraham Lincoln</p>"
         },
         "correctOptions": ["A"],
-        "category": "History",
+        "category_id": "67c86fd31c35282cca94fbac",
         "difficulty": "Easy"
     },
     {
@@ -56,7 +56,7 @@
             "optionD": "<p>1939</p>"
         },
         "correctOptions": ["B"],
-        "category": "History",
+        "category_id": "67c86fd31c35282cca94fbac",
         "difficulty": "Medium"
     },
     {
@@ -68,7 +68,7 @@
             "optionD": "<p>Mao Zedong</p>"
         },
         "correctOptions": ["A"],
-        "category": "History",
+        "category_id": "67c86fd31c35282cca94fbac",
         "difficulty": "Hard"
     },
     {
@@ -80,7 +80,7 @@
             "optionD": "<p>6</p>"
         },
         "correctOptions": ["B"],
-        "category": "Mathematics",
+        "category_id": "67c86fd31c35282cca94fba7",
         "difficulty": "Easy"
     },
     {
@@ -92,7 +92,7 @@
             "optionD": "<p>80°</p>"
         },
         "correctOptions": ["B"],
-        "category": "Mathematics",
+        "category_id": "67c86fd31c35282cca94fba7",
         "difficulty": "Medium"
     },
     {
@@ -104,7 +104,7 @@
             "optionD": "<p>1</p>"
         },
         "correctOptions": ["A"],
-        "category": "Mathematics",
+        "category_id": "67c86fd31c35282cca94fba7",
         "difficulty": "Hard"
     },
     {
@@ -116,7 +116,7 @@
             "optionD": "<p>Mississippi River</p>"
         },
         "correctOptions": ["B"],
-        "category": "Geography",
+        "category_id": "67c86fd31c35282cca94fbad",
         "difficulty": "Easy"
     },
     {
@@ -128,7 +128,7 @@
             "optionD": "<p>Brazil</p>"
         },
         "correctOptions": ["C"],
-        "category": "Geography",
+        "category_id": "67c86fd31c35282cca94fbad",
         "difficulty": "Medium"
     },
     {
@@ -140,7 +140,7 @@
             "optionD": "<p>James Cook</p>"
         },
         "correctOptions": ["A"],
-        "category": "History",
+        "category_id": "67c86fd31c35282cca94fbac",
         "difficulty": "Easy"
     },
     {
@@ -152,7 +152,7 @@
             "optionD": "<p>John Glenn</p>"
         },
         "correctOptions": ["B"],
-        "category": "History",
+        "category_id": "67c86fd31c35282cca94fbac",
         "difficulty": "Medium"
     },
     {
@@ -164,7 +164,7 @@
             "optionD": "<p>Vietnam War</p>"
         },
         "correctOptions": ["C"],
-        "category": "History",
+        "category_id": "67c86fd31c35282cca94fbac",
         "difficulty": "Hard"
     },
     {
@@ -176,7 +176,7 @@
             "optionD": "<p>9</p>"
         },
         "correctOptions": ["C"],
-        "category": "Mathematics",
+        "category_id": "67c86fd31c35282cca94fba7",
         "difficulty": "Easy"
     },
     {
@@ -188,7 +188,7 @@
             "optionD": "<p>2</p>"
         },
         "correctOptions": ["C"],
-        "category": "Mathematics",
+        "category_id": "67c86fd31c35282cca94fba7",
         "difficulty": "Medium"
     },
     {
@@ -200,7 +200,7 @@
             "optionD": "<p>x^2 + C</p>"
         },
         "correctOptions": ["D"],
-        "category": "Mathematics",
+        "category_id": "67c86fd31c35282cca94fba7",
         "difficulty": "Hard"
     }
 ]

@@ -1,34 +1,42 @@
 [
     {
         "name": "Mathematics",
-        "description": "Mathematics is the study of numbers, shapes and patterns. The word comes from the Greek word \"μάθημα\" (máthema), meaning \"science, knowledge, or learning\", and is sometimes shortened to maths (in England, Australia, Ireland, and New Zealand) or math (in the United States and Canada)."
+        "description": "Mathematics is the study of numbers, shapes and patterns. The word comes from the Greek word \"μάθημα\" (máthema), meaning \"science, knowledge, or learning\", and is sometimes shortened to maths (in England, Australia, Ireland, and New Zealand) or math (in the United States and Canada).",
+        "status": true
     },
     {
         "name": "Physics",
-        "description": "Physics is the natural science that studies matter, its motion and behavior through space and time, and the related entities of energy and force. Physics is one of the most fundamental scientific disciplines, and its main goal is to understand how the universe behaves."
+        "description": "Physics is the natural science that studies matter, its motion and behavior through space and time, and the related entities of energy and force. Physics is one of the most fundamental scientific disciplines, and its main goal is to understand how the universe behaves.",
+        "status": true
     },
     {
         "name": "Chemistry",
-        "description": "Chemistry is the scientific discipline involved with elements and compounds composed of atoms, molecules and ions: their composition, structure, properties, behavior and the changes they undergo during a reaction with other substances."
+        "description": "Chemistry is the scientific discipline involved with elements and compounds composed of atoms, molecules and ions: their composition, structure, properties, behavior and the changes they undergo during a reaction with other substances.",
+        "status": true
     },
     {
         "name": "Biology",
-        "description": "Biology is the natural science that studies life and living organisms, including their physical structure, chemical processes, molecular interactions, physiological mechanisms, development and evolution."
+        "description": "Biology is the natural science that studies life and living organisms, including their physical structure, chemical processes, molecular interactions, physiological mechanisms, development and evolution.",
+        "status": true
     },
     {
         "name": "Computer Science",
-        "description": "Computer science is the study of processes that interact with data and that can be represented as data in the form of programs. It enables the use of algorithms to manipulate, store, and communicate digital information."
+        "description": "Computer science is the study of processes that interact with data and that can be represented as data in the form of programs. It enables the use of algorithms to manipulate, store, and communicate digital information.",
+        "status": true
     },
     {
         "name": "History",
-        "description": "History is the study of the past. Events occurring before the invention of writing systems are considered prehistory. \"History\" is an umbrella term that relates to past events as well as the memory, discovery, collection, organization, presentation, and interpretation of information about these events."
+        "description": "History is the study of the past. Events occurring before the invention of writing systems are considered prehistory. \"History\" is an umbrella term that relates to past events as well as the memory, discovery, collection, organization, presentation, and interpretation of information about these events.",
+        "status": true
     },
     {
         "name": "Geography",
-        "description": "Geography is a field of science devoted to the study of the lands, features, inhabitants, and phenomena of the Earth and planets. The first person to use the word \"γεωγραφία\" was Eratosthenes (276–194 BC)."
+        "description": "Geography is a field of science devoted to the study of the lands, features, inhabitants, and phenomena of the Earth and planets. The first person to use the word \"γεωγραφία\" was Eratosthenes (276–194 BC).",
+        "status": true
     },
     {
         "name": "Economics",
-        "description": "Economics is a social science concerned with the production, distribution, and consumption of goods and services. It studies how individuals, businesses, governments, and nations make choices about how to allocate resources."
+        "description": "Economics is a social science concerned with the production, distribution, and consumption of goods and services. It studies how individuals, businesses, governments, and nations make choices about how to allocate resources.",
+        "status": true
     }
 ]

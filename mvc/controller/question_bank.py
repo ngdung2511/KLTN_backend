@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, UploadFile
 from ..model import question_bank
-from ..view.question_bank import Question 
+from ..view.question_bank import QuestionRequest 
 from datetime import datetime
 import pandas as pd
 
@@ -8,18 +8,18 @@ import pandas as pd
 router = APIRouter(prefix="/question_bank", tags=["question_bank"])
 
 @router.post("/create", status_code=status.HTTP_201_CREATED)
-async def create_question(question: Question):
+async def create_question(question: QuestionRequest):
     question_bank.insert_question(question)
     return {"message": "Question created successfully"}
     
 @router.put("/edit/{question_id}")
-async def edit_question(question_id: str, question: Question):
+async def edit_question(question_id: str, question: QuestionRequest):
     question_bank.edit_question(question_id, question)
     return {"message": "Question edited successfully"}
 
 @router.get("/search")
-async def search_question(category: str = None, difficulty: str = None):
-    return question_bank.search_question(category, difficulty)
+async def search_question(category_id: str = None, difficulty: str = None):
+    return question_bank.search_question(category_id, difficulty)
 
 @router.post("/import")
 async def import_file(file: UploadFile):
@@ -34,8 +34,8 @@ async def import_file(file: UploadFile):
     
     questions = []
     for _, row in df.iterrows():
-        question = Question(
-            category=row["category"],
+        question = QuestionRequest(
+            category_id=row["category_id"],
             content=row["content"],
             lstOptions=row["lstOptions"],
             correctOptions=row["correctOptions"],
