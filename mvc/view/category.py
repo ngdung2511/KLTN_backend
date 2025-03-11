@@ -14,7 +14,7 @@ class Category(BaseModel):
     model_config = {
         "json_schema_extra": {
             "example": {
-                "title": "Geography",
+                "name": "Geography",
                 "description": "Geography is a field of science devoted to the study of the lands, features, inhabitants, and phenomena of the Earth and planets. The first person to use the word \"γεωγραφία\" was Eratosthenes (276–194 BC)."
             }
         }
