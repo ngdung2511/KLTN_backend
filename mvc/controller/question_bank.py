@@ -1,3 +1,4 @@
+from typing import List, Union
 from fastapi import APIRouter, status, UploadFile
 from ..model import question_bank
 from ..view.question_bank import QuestionRequest 
@@ -8,7 +9,7 @@ import pandas as pd
 router = APIRouter(prefix="/question_bank", tags=["question_bank"])
 
 @router.post("/create", status_code=status.HTTP_201_CREATED)
-async def create_question(question: QuestionRequest):
+async def create_question(question: Union[QuestionRequest, List[QuestionRequest]]):
     question_bank.insert_question(question)
     return {"message": "Question created successfully"}
     

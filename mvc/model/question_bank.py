@@ -25,7 +25,6 @@ def search_question(category_id: str = None, difficulty: str = None):
         query["category_id"] = category_id
     if difficulty:
         query["difficulty"] = difficulty
-    print(query)
     pipeline = [
         {
             "$match": query
