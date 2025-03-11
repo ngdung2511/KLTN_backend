@@ -48,3 +48,7 @@ async def import_file(file: UploadFile):
         questions.append(question)
     question_bank.insert_question(questions)
     return {"message": "Questions imported successfully"}
+
+@router.get("/categories/count")
+async def get_questions_by_category():
+    return question_bank.getLstQuestionsByCategory()
