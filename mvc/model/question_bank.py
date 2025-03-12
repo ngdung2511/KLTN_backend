@@ -58,7 +58,7 @@ def search_question(category_id: str = None, difficulty: str = None, page: int =
 
     total = question_collection.count_documents(query)
     items = question_collection.aggregate(pipeline)
-    return [QuestionResponse(**item) for item in items]
+    return {"total": total, "items": [QuestionResponse(**item) for item in items]}
 
 
 def getLstQuestionsByCategory():
