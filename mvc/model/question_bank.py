@@ -58,4 +58,47 @@ def search_question(category_id: str = None, difficulty: str = None, page: int =
 
     total = question_collection.count_documents(query)
     items = question_collection.aggregate(pipeline)
-    return {"total": total, "items": [QuestionResponse(**item) for item in items]}
+    return [QuestionResponse(**item) for item in items]
+
+
+def getLstQuestionsByCategory():
+    pipeline = [
+        {
+            "$match": {"status": True}
+        },
+        {
+            "$addFields": {
+                "category_id": { "$toObjectId": "$category_id" }
+            }
+        },
+        {
+            "$lookup": {
+                "from": "categories",
+                "localField": "category_id",
+                "foreignField": "_id",
+                "as": "category"
+            }
+        },
+        {
+            "$unwind": "$category"
+        },
+        {
+            "$group": {
+                "_id": {
+                    "_id": { "$toString": "$category._id" },
+                    "name": "$category.name",
+                    "description": "$category.description"
+                },
+                "totalQuestionCount": {"$sum": 1}
+            }
+        },
+        {
+            "$project": {
+                "_id": 0,
+                "category": "$_id",
+                "totalQuestionCount": 1
+            }
+        }
+    ]
+    
+    return list(question_collection.aggregate(pipeline))
