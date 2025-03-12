@@ -19,8 +19,8 @@ async def edit_question(question_id: str, question: QuestionRequest):
     return {"message": "Question edited successfully"}
 
 @router.get("/search")
-async def search_question(category_id: str = None, difficulty: str = None):
-    return question_bank.search_question(category_id, difficulty)
+async def search_question(category_id: str = None, difficulty: str = None, page: int = 1, size: int = 10):
+    return question_bank.search_question(category_id, difficulty, page, size)
 
 @router.post("/import")
 async def import_file(file: UploadFile):

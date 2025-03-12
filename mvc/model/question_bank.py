@@ -19,7 +19,7 @@ def edit_question(question_id: str, question: QuestionRequest):
     dict_question.pop("created_at")    # delete created_at field
     question_collection.update_one({"_id": ObjectId(question_id), "status": True}, {"$set": dict_question})
 
-def search_question(category_id: str = None, difficulty: str = None):
+def search_question(category_id: str = None, difficulty: str = None, page: int = 1, size: int = 10):
     query = {"status": True}
     if category_id:
         query["category_id"] = category_id
@@ -47,8 +47,15 @@ def search_question(category_id: str = None, difficulty: str = None):
         },
         {
             "$unset": "category_id"
+        },
+        {
+            "$skip": (page - 1) * size
+        },
+        {
+            "$limit": size
         }
     ]
 
+    total = question_collection.count_documents(query)
     items = question_collection.aggregate(pipeline)
-    return [QuestionResponse(**item) for item in items]
+    return {"total": total, "items": [QuestionResponse(**item) for item in items]}
