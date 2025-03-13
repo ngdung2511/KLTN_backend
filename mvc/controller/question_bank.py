@@ -1,7 +1,7 @@
 from typing import List, Union
 from fastapi import APIRouter, status, UploadFile
 from ..model import question_bank
-from ..view.question_bank import QuestionRequest 
+from ..view.question_bank import QuestionRequest, SearchQuestionRequest
 from datetime import datetime
 import pandas as pd
 
@@ -19,8 +19,8 @@ async def edit_question(question_id: str, question: QuestionRequest):
     return {"message": "Question edited successfully"}
 
 @router.get("/search")
-async def search_question(category_id: str = None, difficulty: str = None, page: int = 1, size: int = 10):
-    return question_bank.search_question(category_id, difficulty, page, size)
+async def search_question(search_question_request: SearchQuestionRequest):
+    return question_bank.search_question(search_question_request.category_id, search_question_request.difficulty, search_question_request.page, search_question_request.size)
 
 @router.post("/import")
 async def import_file(file: UploadFile):

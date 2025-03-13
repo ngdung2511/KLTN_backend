@@ -19,12 +19,12 @@ def edit_question(question_id: str, question: QuestionRequest):
     dict_question.pop("created_at")    # delete created_at field
     question_collection.update_one({"_id": ObjectId(question_id), "status": True}, {"$set": dict_question})
 
-def search_question(category_id: str = None, difficulty: str = None, page: int = 1, size: int = 10):
+def search_question(category_id: List[str] = None, difficulty: List[str] = None, page: int = 1, size: int = 10):
     query = {"status": True}
     if category_id:
-        query["category_id"] = category_id
+        query["category_id"] = {"$in": [id for id in category_id]}
     if difficulty:
-        query["difficulty"] = difficulty
+        query["difficulty"] = {"$in": difficulty}
     pipeline = [
         {
             "$match": query

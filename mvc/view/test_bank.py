@@ -38,8 +38,7 @@ class TestRequest(BaseModel):
             "example": {
                 "title": "Test on Geography",
                 "description": "Test on Geography for SS1 students",
-                "category_id": "67c86fd31c35282cca94fbad",
-                "questions_id": ["60f9b2b3b2e9b1c5f9a2d0f3", "60f9b2b3b2e9b1c5f9a2d0f4", "60f9b2b3b2e9b1c5f9a2d0f5"]
+                "lstQuestions_id": ["60f9b2b3b2e9b1c5f9a2d0f3", "60f9b2b3b2e9b1c5f9a2d0f4", "60f9b2b3b2e9b1c5f9a2d0f5"]
             }
         }
     }

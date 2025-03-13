@@ -3,6 +3,23 @@ from pydantic import BaseModel, BeforeValidator, Field
 from datetime import datetime
 from .category import Category
 
+class SearchQuestionRequest(BaseModel):
+    category_id: List[str] = Field(alias="category_id", default=None)
+    difficulty: List[str] = Field(alias="difficulty", default=None)
+    page: int = 1
+    size: int = 10
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "category_id": ["67c86fd31c35282cca94fbad"],
+                "difficulty": ["Easy"],
+                "page": 1,
+                "size": 10
+            }
+        }
+    }
+
 class QuestionRequest(BaseModel):
     id: Optional[Annotated[str, BeforeValidator(str)]] = Field(alias="_id", default = None)
     content: str
