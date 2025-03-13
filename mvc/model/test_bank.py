@@ -21,11 +21,10 @@ def insert_test(test: Union[TestRequest, List[TestRequest]]):
     return result
     
 
-def auto_create_test(category_id: str, hardQuestionCount: int, easyQuestionCount: int, mediumQuestionCount: int):
-
+def auto_create_test(category_id: List[str], hardQuestionCount: int, easyQuestionCount: int, mediumQuestionCount: int, title: str, description: str):
     def get_questions(difficulty, count):
         return list(question_collection.aggregate([
-            {"$match": {"category_id": category_id, "difficulty": difficulty, "status": True}},
+            {"$match": {"category_id": {"$in": [i for i in category_id]}, "difficulty": difficulty, "status": True}},
             {"$sample": {"size": count}},
             {"$addFields": {"category_id": {"$toObjectId": "$category_id"}}},
             {"$lookup": {"from": "categories", "localField": "category_id", "foreignField": "_id", "as": "category"}},
@@ -49,12 +48,10 @@ def auto_create_test(category_id: str, hardQuestionCount: int, easyQuestionCount
     custom_order = ["Easy", "Medium", "Hard"]
     questions = sorted(questions, key=lambda x: custom_order.index(x["difficulty"]))
     questions = [QuestionResponse(**q) for q in questions]
-
-    category_item = category_collection.find_one({"_id": ObjectId(category_id), "status": True})
-    category = Category(**category_item)
     
-    test_response = TestResponse(title=f"Test on {category.name}", description=f"Test on {category.name} for SS1 students", category=category, lstQuestions=questions, status=True, created_at=datetime.datetime.now(), updated_at=datetime.datetime.now())
-    test_request = TestRequest(title=f"Test on {category.name}", description=f"Test on {category.name} for SS1 students", category_id=category_id, lstQuestions_id=[str(q.id) for q in questions], status=True, created_at=datetime.datetime.now(), updated_at=datetime.datetime.now())
+    test_response = TestResponse(title=title, description=description, lstQuestions=questions, status=True, created_at=datetime.datetime.now(), updated_at=datetime.datetime.now())
+
+    test_request = TestRequest(title=title, description=description, lstQuestions_id=[str(q.id) for q in questions], status=True, created_at=datetime.datetime.now(), updated_at=datetime.datetime.now())
 
     result = insert_test(test_request)
     test_response.id = str(result.inserted_id)

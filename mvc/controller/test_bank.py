@@ -1,5 +1,6 @@
+from typing import List
 from fastapi import APIRouter, HTTPException
-from ..view.test_bank import TestRequest
+from ..view.test_bank import TestRequest, TestAutoResquest
 from ..model import test_bank
 
 router = APIRouter(prefix="/test_bank", tags=["test_bank"])
@@ -10,8 +11,8 @@ async def create_test(test: TestRequest):
     return {"message": "Test created successfully"}
 
 @router.post("/create-auto")
-async def create_test_auto(category_id: str, hardQuestionCount: int, easyQuestionCount: int, mediumQuestionCount: int):
-    results = test_bank.auto_create_test(category_id, hardQuestionCount, easyQuestionCount, mediumQuestionCount)
+async def create_test_auto(test: TestAutoResquest):
+    results = test_bank.auto_create_test(test.category_id, test.hardQuestionCount, test.easyQuestionCount, test.mediumQuestionCount, test.title, test.description)
     if isinstance(results, dict):
         raise HTTPException(status_code=400, detail=results["message"])
     return results
