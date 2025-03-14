@@ -18,7 +18,7 @@ async def edit_question(question_id: str, question: QuestionRequest):
     question_bank.edit_question(question_id, question)
     return {"message": "Question edited successfully"}
 
-@router.get("/search")
+@router.post("/search")
 async def search_question(search_question_request: SearchQuestionRequest):
     return question_bank.search_question(search_question_request.category_id, search_question_request.difficulty, search_question_request.page, search_question_request.size)
 
@@ -49,6 +49,3 @@ async def import_file(file: UploadFile):
     question_bank.insert_question(questions)
     return {"message": "Questions imported successfully"}
 
-@router.get("/categories/count")
-async def get_questions_by_category():
-    return question_bank.getLstQuestionsByCategory()

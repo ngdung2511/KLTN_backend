@@ -1,5 +1,5 @@
 
-from typing import Annotated, Optional
+from typing import Annotated, List, Optional
 from pydantic import BaseModel, BeforeValidator, Field
 from datetime import datetime
 
@@ -19,3 +19,6 @@ class Category(BaseModel):
             }
         }
     }
+
+class CategoryCount(BaseModel):
+    lstCategory: List[str] = None

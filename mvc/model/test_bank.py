@@ -66,10 +66,6 @@ def search_by_name(name: str):
     pipeline = [
         {"$match": {"title": {"$regex": name, "$options": "i"}, "status": True}},  # search by name
         {"$addFields": {"lstQuestions_id": {"$map": {"input": "$lstQuestions_id", "as": "id", "in": {"$toObjectId": "$$id"}}}, "category_id": {"$toObjectId": "$category_id"}}},  # convert lstQuestions_id to ObjectId, category_id to ObjectId
-
-        {"$lookup": {"from": "categories", "localField": "category_id", "foreignField": "_id", "as": "category"}},  # join category
-        {"$unwind": "$category"},
-        {"$unset": "category_id"},
         
         {"$lookup": {"from": "questions", "localField": "lstQuestions_id", "foreignField": "_id", "as": "lstQuestions"}},  # join questions
         {"$unset": "lstQuestions_id"},
@@ -87,3 +83,26 @@ def search_by_name(name: str):
     items = [TestResponse(**item) for item in items]
 
     return items
+
+def get_test(test_id: str):
+    pipeline = [
+        {"$match": {"_id": ObjectId(test_id), "status": True}},
+        {"$addFields": {"lstQuestions_id": {"$map": {"input": "$lstQuestions_id", "as": "id", "in": {"$toObjectId": "$$id"}}}, "category_id": {"$toObjectId": "$category_id"}}},  # convert lstQuestions_id to ObjectId, category_id to ObjectId
+        
+        {"$lookup": {"from": "questions", "localField": "lstQuestions_id", "foreignField": "_id", "as": "lstQuestions"}},  # join questions
+        {"$unset": "lstQuestions_id"},
+    ]
+    item = list(test_collection.aggregate(pipeline))
+    
+    if item:
+        item = item[0]
+        for question in item["lstQuestions"]:
+            question["category_id"] = ObjectId(question["category_id"])
+            question["category"] = category_collection.find_one({"_id": question["category_id"], "status": True})
+            question["category"] = Category(**question["category"])
+
+            question.pop("category_id")
+    else:
+        return None
+    item = TestResponse(**item)
+    return item

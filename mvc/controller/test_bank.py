@@ -29,3 +29,10 @@ async def search_by_name(name: str):
     if not items:
         raise HTTPException(status_code=404, detail="Item not found")
     return items
+
+@router.get("/get/{test_id}")
+async def get_test(test_id: str):
+    item = test_bank.get_test(test_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
