@@ -28,7 +28,17 @@ def search_question(category_id: List[str] = None, difficulty: List[str] = None,
         query["difficulty"] = {"$in": difficulty}
     if content:
         extract_str = BeautifulSoup(content, "html.parser").get_text()
-        query["content"] = {"$regex": extract_str, "$options": "i"}
+        option_conditions = [
+            {"lstOptions.optionA": {"$regex": extract_str, "$options": "i"}},
+            {"lstOptions.optionB": {"$regex": extract_str, "$options": "i"}},
+            {"lstOptions.optionC": {"$regex": extract_str, "$options": "i"}},
+            {"lstOptions.optionD": {"$regex": extract_str, "$options": "i"}}
+        ]
+        query["$or"] = [
+            {"content": {"$regex": extract_str, "$options": "i"}},
+            *option_conditions
+        ]
+
     pipeline = [
         {
             "$match": query

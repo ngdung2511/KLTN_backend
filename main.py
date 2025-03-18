@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .mvc.controller import question_bank, test_bank, category
+from .mvc.controller import question_bank, test_bank, category, answer_sheet
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -15,6 +15,7 @@ app.add_middleware(
 app.include_router(question_bank.router)
 app.include_router(test_bank.router)
 app.include_router(category.router)
+app.include_router(answer_sheet.router)
 
 @app.get("/")
 async def root():
