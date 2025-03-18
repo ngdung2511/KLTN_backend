@@ -6,6 +6,7 @@ from .category import Category
 class SearchQuestionRequest(BaseModel):
     category_id: List[str] = Field(alias="category_id", default=None)
     difficulty: List[str] = Field(alias="difficulty", default=None)
+    content: str = None
     page: int = 1
     size: int = 10
 

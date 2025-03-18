@@ -20,7 +20,7 @@ async def edit_question(question_id: str, question: QuestionRequest):
 
 @router.post("/search")
 async def search_question(search_question_request: SearchQuestionRequest):
-    return question_bank.search_question(search_question_request.category_id, search_question_request.difficulty, search_question_request.page, search_question_request.size)
+    return question_bank.search_question(search_question_request.category_id, search_question_request.difficulty, search_question_request.page, search_question_request.size, search_question_request.content)
 
 @router.post("/import")
 async def import_file(file: UploadFile):

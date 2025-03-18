@@ -5,6 +5,7 @@ from ..view.category import Category
 from bson import ObjectId
 from ..view.question_bank import QuestionResponse
 import datetime
+from bs4 import BeautifulSoup
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["mcq_grading_system"]
@@ -63,6 +64,7 @@ def edit_test(test_id: str, test: TestRequest):
     test_collection.update_one({"_id": ObjectId(test_id), "status": True}, {"$set": dict_test})
 
 def search_by_name(name: str):
+    name = BeautifulSoup(name, "html.parser").get_text()
     pipeline = [
         {"$match": {"title": {"$regex": name, "$options": "i"}, "status": True}},  # search by name
         {"$addFields": {"lstQuestions_id": {"$map": {"input": "$lstQuestions_id", "as": "id", "in": {"$toObjectId": "$$id"}}}, "category_id": {"$toObjectId": "$category_id"}}},  # convert lstQuestions_id to ObjectId, category_id to ObjectId
