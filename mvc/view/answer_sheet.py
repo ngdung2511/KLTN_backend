@@ -12,9 +12,9 @@ class AnswerSheetSchema(BaseModel):
     studentName: str
     studentCode: str
     isGraded: bool = False
-    testId: Annotated[str, BeforeValidator(str)]
+    testId: Annotated[str, BeforeValidator(str)] = Field(default = None)
     dateGraded: Optional[datetime] = None
-    detectedAnswers: List[DetectedAnswer]
+    detectedAnswers: List[DetectedAnswer] = []
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
     status: bool = True

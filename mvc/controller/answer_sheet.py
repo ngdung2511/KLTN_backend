@@ -6,18 +6,11 @@ from ..model import answer_sheet
 
 router = APIRouter(prefix="/answer_sheet", tags=["Answer Sheet"])
 
-@router.post("/create", status_code=status.HTTP_201_CREATED)
-# async def create_category(category: Union[Category, List[Category]]):
-#     category_model.insert_category(category)
-#     return {"message": "category created successfully"}
-
-
 @router.post("/upload")
 async def upload(file: UploadFile = File(...)):
-    result = upload_photo(file)
-    return result
-
-@router.post("/upload_schema")
-async def upload_schema(schema: Union[AnswerSheetSchema, List[AnswerSheetSchema]]):
-    answer_sheet.insert_answer_sheet(schema)
-    return {"message": "answer sheet created successfully"}
+    file_name = file.filename
+    studentName = file_name.split(".")[0].split("_")[1]
+    studentCode = file_name.split(".")[0].split("_")[0]
+    imageId = upload_photo(file)
+    answer_sheet.insert_answer_sheet(AnswerSheetSchema(imageId=imageId['file_id'], studentName=studentName, studentCode=studentCode))
+    return imageId
