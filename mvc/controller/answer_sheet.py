@@ -18,6 +18,6 @@ async def upload(file: UploadFile = File(...)):
     return result
 
 @router.post("/upload_schema")
-async def upload_schema(schema: AnswerSheetSchema):
+async def upload_schema(schema: Union[AnswerSheetSchema, List[AnswerSheetSchema]]):
     answer_sheet.insert_answer_sheet(schema)
     return {"message": "answer sheet created successfully"}
