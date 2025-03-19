@@ -18,3 +18,24 @@ class AnswerSheetSchema(BaseModel):
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
     status: bool = True
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "imageId": "1234",
+                "studentName": "John Doe",
+                "studentCode": "123456",
+                "testId": "1234",
+                "detectedAnswers": [
+                    {
+                        "questionIndex": 1,
+                        "answer": "A"
+                    },
+                    {
+                        "questionIndex": 2,
+                        "answer": "B"
+                    }
+                ]
+            }
+        }
+    }
