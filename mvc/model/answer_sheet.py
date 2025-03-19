@@ -11,3 +11,11 @@ def insert_answer_sheet(answer_sheet: Union[AnswerSheetSchema, List[AnswerSheetS
         answer_sheet_collection.insert_many([answer_sheet.model_dump() for answer_sheet in answer_sheet])
     else:
         answer_sheet_collection.insert_one(answer_sheet.model_dump())
+
+
+def get_all_answer_sheets():
+    total = answer_sheet_collection.count_documents({})
+    items = list(answer_sheet_collection.find())
+    for item in items:
+        item['_id'] = str(item['_id'])
+    return {"total": total, "items": items}
