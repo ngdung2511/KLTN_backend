@@ -4,8 +4,10 @@ from datetime import datetime
 
 
 class DetectedAnswer(BaseModel):
-    questionIndex: int
-    answer: str
+    questionIndex: Annotated[int, BeforeValidator(int)]
+    answer: Annotated[str, BeforeValidator(str)]
+
+
 class AnswerSheetSchema(BaseModel):
     id: Optional[Annotated[str, BeforeValidator(str)]] = Field(alias="_id", default = None)
     imageId: str
