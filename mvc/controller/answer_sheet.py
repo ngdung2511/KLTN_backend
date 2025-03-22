@@ -1,8 +1,8 @@
 from fastapi import APIRouter, status, UploadFile,File
 from ..model.upload import upload_photo
-from ..model.answer_sheet import AnswerSheetSchema
-from typing import List
 from ..model import answer_sheet
+from ..view.answer_sheet import AnswerSheetSchema, ScoreRequest
+from typing import List
 import base64
 import anthropic
 import ast
@@ -28,7 +28,7 @@ async def upload(files: List[UploadFile] = File(...)):
         # use LLM to get answer
         message = client.messages.create(
             model="claude-3-7-sonnet-20250219",
-            max_tokens=1024,
+            max_tokens=2048,
             system=[
                 {
                     "type": "text",
@@ -75,3 +75,7 @@ async def upload(files: List[UploadFile] = File(...)):
 @router.post("/list", status_code=status.HTTP_201_CREATED)
 async def list_answer_sheets():
     return answer_sheet.get_all_answer_sheets()
+
+@router.post("/score")
+async def score_answer_sheets(score_request: ScoreRequest):
+    return answer_sheet.score_answer_sheets(score_request.answerSheetId, score_request.testId)
