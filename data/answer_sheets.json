@@ -1,0 +1,32 @@
+[
+    {
+        "imageId": "1",
+        "studentName": "John Doe",
+        "studentCode": "123456",
+        "isGraded": false,
+        "testId": null,
+        "dateGraded": null,
+        "detectedAnswers": [
+            {
+                "questionIndex": 1,
+                "answer": ["B"]
+            },
+            {
+                "questionIndex": 2,
+                "answer": ["B"]
+            },
+            {
+                "questionIndex": 3,
+                "answer": ["C"]
+            },
+            {
+                "questionIndex": 4,
+                "answer": ["A"]
+            },
+            {
+                "questionIndex": 5,
+                "answer": ["B"]
+            }
+        ]
+    }
+]

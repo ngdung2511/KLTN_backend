@@ -5,7 +5,7 @@ from datetime import datetime
 
 class DetectedAnswer(BaseModel):
     questionIndex: Annotated[int, BeforeValidator(int)]
-    answer: Annotated[str, BeforeValidator(str)]
+    answer: List[str]
 
 
 class AnswerSheetSchema(BaseModel):
@@ -41,3 +41,7 @@ class AnswerSheetSchema(BaseModel):
             }
         }
     }
+
+class ScoreRequest(BaseModel):
+    answerSheetId: List[Annotated[str, BeforeValidator(str)]]
+    testId: Annotated[str, BeforeValidator(str)]
