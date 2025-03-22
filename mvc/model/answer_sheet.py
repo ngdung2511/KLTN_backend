@@ -4,6 +4,7 @@ from ..view.answer_sheet import AnswerSheetSchema
 from ..model.test_bank import get_test
 from datetime import datetime
 from bson import ObjectId
+import copy
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["mcq_grading_system"]
@@ -24,7 +25,7 @@ def get_all_answer_sheets():
         item['_id'] = str(item['_id'])
     return {"total": total, "items": items}
 
-def grade_answers(correct_answers, student_answers) -> Dict[str, Any]:
+def grade_answers(correct_answers, student_answers, answer_sheet_id) -> Dict[str, Any]:
     score = 0
     graded_answers = []
 
@@ -54,6 +55,7 @@ def grade_answers(correct_answers, student_answers) -> Dict[str, Any]:
 
     # Return the grading results
     return {
+        "answer_sheet_id": answer_sheet_id,
         "score": score,
         "totalQuestions": total_questions,
         "gradedAnswers": graded_answers,
@@ -66,14 +68,19 @@ def score_answer_sheets(answer_sheet_ids: List[str], test_id: str):
         raise ValueError("Test not found")
     
     correct_answers = [{'questionId': question.id, 'correctAnswer': question.correctOptions} for question in testObj.lstQuestions]
-
+    
+    grading_results = []
     for answer_sheet_id in answer_sheet_ids:
         answer_sheet = answer_sheet_collection.find_one({"_id": ObjectId(answer_sheet_id)})
         if not answer_sheet:
             raise ValueError(f"Answer sheet with ID {answer_sheet_id} not found")
         student_answers = answer_sheet['detectedAnswers']
 
-        grading_results = grade_answers(correct_answers, student_answers)
-        answer_sheet_collection.update_one({"_id": answer_sheet_id}, {"$set": {"gradingResults": grading_results, "dateGraded": datetime.now(), "isGraded": True, "testId": test_id}})
+        grading_result = grade_answers(correct_answers, student_answers, answer_sheet_id)
+        grading_results.append(copy.deepcopy(grading_result))
+        grading_result.pop("answer_sheet_id")
+        grading_result.pop("gradedAnswers")
+
+        answer_sheet_collection.update_one({"_id": ObjectId(answer_sheet_id)}, {"$set": {"gradingResults": grading_results, "dateGraded": datetime.now(), "isGraded": True, "testId": test_id}})
     return {"message": "Answer sheets graded successfully", "results": grading_results}
         
