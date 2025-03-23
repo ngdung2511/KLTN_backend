@@ -28,9 +28,17 @@ def get_all_answer_sheets():
 def grade_answers(correct_answers, student_answers, answer_sheet_id) -> Dict[str, Any]:
     score = 0
     graded_answers = []
+    total_questions = len(correct_answers)
 
-    for student_answer in student_answers:
-        correct_answer = correct_answers[student_answer['questionIndex'] - 1]['correctAnswer']
+    # Filter student answers to only include those with questionIndex within the test range
+    valid_student_answers = [
+        answer for answer in student_answers 
+        if 1 <= answer['questionIndex'] <= total_questions
+    ]
+
+    for student_answer in valid_student_answers:
+        question_idx = student_answer['questionIndex'] - 1
+        correct_answer = correct_answers[question_idx]['correctAnswer']
         
         is_correct = False
         if correct_answer:
@@ -40,7 +48,7 @@ def grade_answers(correct_answers, student_answers, answer_sheet_id) -> Dict[str
                 is_correct = student_answer['answer'] == correct_answer[0]
 
         graded_answers.append({
-            "questionId": correct_answers[student_answer['questionIndex'] - 1]['questionId'],
+            "questionId": correct_answers[question_idx]['questionId'],
             "studentAnswers": student_answer['answer'],
             "correctAnswer": correct_answer,
             "correct": is_correct
@@ -49,9 +57,6 @@ def grade_answers(correct_answers, student_answers, answer_sheet_id) -> Dict[str
         # Increment the score if the answer is correct
         if is_correct:
             score += 1
-
-    # Calculate the total number of questions in the test
-    total_questions = len(correct_answers)
 
     # Return the grading results
     return {
@@ -83,4 +88,3 @@ def score_answer_sheets(answer_sheet_ids: List[str], test_id: str):
 
         answer_sheet_collection.update_one({"_id": ObjectId(answer_sheet_id)}, {"$set": {"gradingResults": grading_results, "dateGraded": datetime.now(), "isGraded": True, "testId": test_id}})
     return {"message": "Answer sheets graded successfully", "results": grading_results}
-        

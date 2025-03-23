@@ -62,9 +62,8 @@ async def upload(files: List[UploadFile] = File(...)):
             list_answer = ast.literal_eval(content)
         except:
             raise ValueError("Error in processing the image. Please try again.")
-        
+        file.seek(0)
         imageId = upload_photo(file)
-
         
         answer_sheet_data = AnswerSheetSchema(imageId=imageId['file_id'], studentName=studentName, studentCode=studentCode, detectedAnswers=list_answer)
         answer_sheet.insert_answer_sheet(answer_sheet_data)
@@ -76,6 +75,6 @@ async def upload(files: List[UploadFile] = File(...)):
 async def list_answer_sheets():
     return answer_sheet.get_all_answer_sheets()
 
-@router.post("/score")
+@router.post("/score", status_code=status.HTTP_201_CREATED)
 async def score_answer_sheets(score_request: ScoreRequest):
     return answer_sheet.score_answer_sheets(score_request.answerSheetId, score_request.testId)
