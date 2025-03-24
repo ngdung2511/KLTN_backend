@@ -5,11 +5,13 @@ from ..model.test_bank import get_test
 from datetime import datetime
 from bson import ObjectId
 import copy
+from bs4 import BeautifulSoup
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["mcq_grading_system"]
 answer_sheet_collection = db["answer_sheet"]
 test_collection = db["tests"]
+question_collection = db["questions"]
 
 def insert_answer_sheet(answer_sheet: Union[AnswerSheetSchema, List[AnswerSheetSchema]]):
     if isinstance(answer_sheet, list):
@@ -33,7 +35,7 @@ def grade_answers(correct_answers, student_answers, answer_sheet_id) -> Dict[str
     # Filter student answers to only include those with questionIndex within the test range
     valid_student_answers = [
         answer for answer in student_answers 
-        if 1 <= answer['questionIndex'] <= total_questions
+        if 1 <= answer['questionIndex'] <= total_questions 
     ]
 
     for student_answer in valid_student_answers:
@@ -43,15 +45,19 @@ def grade_answers(correct_answers, student_answers, answer_sheet_id) -> Dict[str
         is_correct = False
         if correct_answer:
             if isinstance(student_answer['answer'], list):  # If student has multiple answers (e.g., B, C)
+                print('list')
                 is_correct = set(student_answer['answer']) == set(correct_answer)
             else:  # If student has only one answer (e.g., B)
+                print('single', student_answer['answer'] == correct_answer[0])
                 is_correct = student_answer['answer'] == correct_answer[0]
 
         graded_answers.append({
             "questionId": correct_answers[question_idx]['questionId'],
             "studentAnswers": student_answer['answer'],
             "correctAnswer": correct_answer,
-            "correct": is_correct
+            "correct": is_correct,
+            "questionContent": question_collection.find_one({"_id": ObjectId(correct_answers[question_idx]['questionId'])})['content'],
+            "correctAnswerContent": BeautifulSoup(question_collection.find_one({"_id": ObjectId(correct_answers[question_idx]['questionId'])})['lstOptions']['option' + correct_answer[0]], 'html.parser').get_text()
         })
 
         # Increment the score if the answer is correct
@@ -61,6 +67,8 @@ def grade_answers(correct_answers, student_answers, answer_sheet_id) -> Dict[str
     # Return the grading results
     return {
         "answer_sheet_id": answer_sheet_id,
+        "studentName": answer_sheet_collection.find_one({"_id": ObjectId(answer_sheet_id)})['studentName'],
+        "studentCode": answer_sheet_collection.find_one({"_id": ObjectId(answer_sheet_id)})['studentCode'],
         "score": score,
         "totalQuestions": total_questions,
         "gradedAnswers": graded_answers,
