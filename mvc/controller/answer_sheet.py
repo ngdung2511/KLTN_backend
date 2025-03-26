@@ -6,7 +6,7 @@ from typing import List
 import base64
 import anthropic
 import ast
-
+import json
 
 router = APIRouter(prefix="/answer_sheet", tags=["Answer Sheet"])
 client = anthropic.Anthropic()
@@ -56,15 +56,14 @@ async def upload(files: List[UploadFile] = File(...)):
                 }
             ]
         )
-        content = message.content[0].text
+        content = json.dumps([item for item in json.loads(message.content[0].text) if item['answer']])
         list_answer = []
         try:
             list_answer = ast.literal_eval(content)
         except:
             raise ValueError("Error in processing the image. Please try again.")
-        
+        await file.seek(0)
         imageId = upload_photo(file)
-
         
         answer_sheet_data = AnswerSheetSchema(imageId=imageId['file_id'], studentName=studentName, studentCode=studentCode, detectedAnswers=list_answer)
         answer_sheet.insert_answer_sheet(answer_sheet_data)
@@ -76,6 +75,6 @@ async def upload(files: List[UploadFile] = File(...)):
 async def list_answer_sheets():
     return answer_sheet.get_all_answer_sheets()
 
-@router.post("/score")
+@router.post("/score", status_code=status.HTTP_201_CREATED)
 async def score_answer_sheets(score_request: ScoreRequest):
     return answer_sheet.score_answer_sheets(score_request.answerSheetId, score_request.testId)
