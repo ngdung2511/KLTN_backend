@@ -80,3 +80,26 @@ class QuestionResponse(BaseModel):
         }
     }
 }
+    
+class ChatQuestionRequest(BaseModel):
+    question_id: str
+    messages: List[dict]
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "question_id": "67c86fd31c35282cca94fbad",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Why is the ocean salty?"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    }
