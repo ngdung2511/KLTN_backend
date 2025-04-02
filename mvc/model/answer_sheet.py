@@ -145,7 +145,6 @@ def score_answer_sheets(answer_sheet_ids: List[str], test_id: str):
 
 
 def quick_score(student_answers: List[str], correct_answers: List[str]):
-    print(student_answers, correct_answers)
     score = 0
     graded_answers = []
     total_questions = len(correct_answers)
@@ -175,3 +174,8 @@ def quick_score(student_answers: List[str], correct_answers: List[str]):
         "gradedAnswers": graded_answers,
         "percentage": (score / total_questions) * 100 if total_questions > 0 else 0
     }
+
+if __name__ == "__main__":
+    student_answers = [{'questionIndex': 1, 'answer': ['A']}, {'questionIndex': 2, 'answer': ['B']}, {'questionIndex': 3, 'answer': ['C']}]
+    correct_answers = ['A', 'B']
+    print(quick_score(student_answers, correct_answers))
