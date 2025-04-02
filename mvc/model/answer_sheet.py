@@ -6,12 +6,58 @@ from datetime import datetime
 from bson import ObjectId
 import copy
 from bs4 import BeautifulSoup
+import anthropic
+import ast
+import json
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["mcq_grading_system"]
 answer_sheet_collection = db["answer_sheet"]
 test_collection = db["tests"]
 question_collection = db["questions"]
+prompt = open("mvc/model/prompt.txt", "r", encoding="utf-8").read()
+client_llm = anthropic.Anthropic()
+
+def detect_answer_sheet(encoded_string):
+    message = client_llm.messages.create(
+        model="claude-3-7-sonnet-20250219",
+        max_tokens=2048,
+        system=[
+            {
+                "type": "text",
+                "text": prompt,
+                "cache_control": {"type": "ephemeral"}
+            }
+        ],
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "image",
+                        "source": {
+                            "type": "base64",
+                            "media_type": "image/jpeg",
+                            "data": encoded_string
+                        }
+                    },
+                    {
+                        "type": "text",
+                        "text": "Identify which options have been filled."
+                    }
+                ]
+            }
+        ]
+    )
+    content = json.dumps([item for item in json.loads(message.content[0].text) if item['answer']])
+    list_answer = []
+    try:
+        list_answer = ast.literal_eval(content)
+    except:
+        raise ValueError("Error in processing the image. Please try again.")
+    
+    return list_answer
+
 
 def insert_answer_sheet(answer_sheet: Union[AnswerSheetSchema, List[AnswerSheetSchema]]):
     if isinstance(answer_sheet, list):
@@ -96,3 +142,36 @@ def score_answer_sheets(answer_sheet_ids: List[str], test_id: str):
 
         answer_sheet_collection.update_one({"_id": ObjectId(answer_sheet_id)}, {"$set": {"gradingResults": grading_results, "dateGraded": datetime.now(), "isGraded": True, "testId": test_id}})
     return {"message": "Answer sheets graded successfully", "results": grading_results}
+
+
+def quick_score(student_answers: List[str], correct_answers: List[str]):
+    print(student_answers, correct_answers)
+    score = 0
+    graded_answers = []
+    total_questions = len(correct_answers)
+
+    for i in range(len(correct_answers)):
+        question_idx = i + 1
+        correct_answer = [correct_answers[i]]
+        student_answer = next((answer['answer'] for answer in student_answers if answer['questionIndex'] == question_idx), None)
+        is_correct = False
+        if correct_answer:
+            if isinstance(student_answer, list):
+                is_correct = set(student_answer) == set(correct_answer)
+            else:
+                is_correct = student_answer == correct_answer[0]
+
+        graded_answers.append({
+            "studentAnswers": student_answer,
+            "correctAnswer": correct_answer,
+            "correct": is_correct,
+        })
+
+        if is_correct:
+            score += 1
+    return {
+        "score": score,
+        "totalQuestions": total_questions,
+        "gradedAnswers": graded_answers,
+        "percentage": (score / total_questions) * 100 if total_questions > 0 else 0
+    }

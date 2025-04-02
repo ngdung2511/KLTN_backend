@@ -1,7 +1,7 @@
-from fastapi import APIRouter, status, UploadFile,File
+from fastapi import APIRouter, status, UploadFile, File
 from ..model.upload import upload_photo
 from ..model import answer_sheet
-from ..view.answer_sheet import AnswerSheetSchema, ScoreRequest
+from ..view.answer_sheet import AnswerSheetSchema, ScoreRequest, QuickScoringRequest
 from typing import List
 import base64
 import anthropic
@@ -9,8 +9,6 @@ import ast
 import json
 
 router = APIRouter(prefix="/answer_sheet", tags=["Answer Sheet"])
-client = anthropic.Anthropic()
-prompt = open("mvc/controller/prompt.txt", "r", encoding="utf-8").read()
 
 
 @router.post("/upload", status_code=status.HTTP_201_CREATED)
@@ -26,42 +24,7 @@ async def upload(files: List[UploadFile] = File(...)):
         encoded_string = base64.b64encode(content).decode("utf-8")        
 
         # use LLM to get answer
-        message = client.messages.create(
-            model="claude-3-7-sonnet-20250219",
-            max_tokens=2048,
-            system=[
-                {
-                    "type": "text",
-                    "text": prompt,
-                    "cache_control": {"type": "ephemeral"}
-                }
-            ],
-            messages=[
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "image",
-                            "source": {
-                                "type": "base64",
-                                "media_type": "image/jpeg",
-                                "data": encoded_string
-                            }
-                        },
-                        {
-                            "type": "text",
-                            "text": "Identify which options have been filled."
-                        }
-                    ]
-                }
-            ]
-        )
-        content = json.dumps([item for item in json.loads(message.content[0].text) if item['answer']])
-        list_answer = []
-        try:
-            list_answer = ast.literal_eval(content)
-        except:
-            raise ValueError("Error in processing the image. Please try again.")
+        list_answer = answer_sheet.detect_answer_sheet(encoded_string)
         await file.seek(0)
         imageId = upload_photo(file)
         
@@ -78,3 +41,12 @@ async def list_answer_sheets():
 @router.post("/score", status_code=status.HTTP_201_CREATED)
 async def score_answer_sheets(score_request: ScoreRequest):
     return answer_sheet.score_answer_sheets(score_request.answerSheetId, score_request.testId)
+
+@router.post("/quick_score")
+async def quick_score(quick_score_request: QuickScoringRequest):
+    # change image to base64
+    content = await quick_score_request.answerSheet.read()
+    encoded_string = base64.b64encode(content).decode("utf-8")
+
+    list_answer = answer_sheet.detect_answer_sheet(encoded_string)
+    return answer_sheet.quick_score(list_answer, quick_score_request.correctAnswer)
