@@ -49,5 +49,13 @@ class ScoreRequest(BaseModel):
 
 class QuickScoringRequest(BaseModel):
     id: Optional[Annotated[str, BeforeValidator(str)]] = Field(alias="_id", default = None)
-    correctAnswer: Union[UploadFile, Annotated[str, BeforeValidator(str)]] = Field(alias="answerList", default = None)
+    correctAnswer: List[str]
     answerSheet: UploadFile = File(..., alias="answerSheet")
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "correctAnswer": ["A", "B", "C"],
+            }
+        }
+    }
