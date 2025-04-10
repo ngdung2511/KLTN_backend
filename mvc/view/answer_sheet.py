@@ -1,7 +1,7 @@
 from typing import Annotated, List, Optional, Union
 from pydantic import BaseModel, BeforeValidator, Field
 from datetime import datetime
-from fastapi import UploadFile, File
+from fastapi import Form, UploadFile, File
 
 class DetectedAnswer(BaseModel):
     questionIndex: Annotated[int, BeforeValidator(int)]
@@ -45,17 +45,3 @@ class AnswerSheetSchema(BaseModel):
 class ScoreRequest(BaseModel):
     answerSheetId: List[Annotated[str, BeforeValidator(str)]]
     testId: Annotated[str, BeforeValidator(str)]
-
-
-class QuickScoringRequest(BaseModel):
-    id: Optional[Annotated[str, BeforeValidator(str)]] = Field(alias="_id", default = None)
-    correctAnswer: List[str]
-    answerSheet: UploadFile = File(..., alias="answerSheet")
-
-    model_config = {
-        "json_schema_extra": {
-            "example": {
-                "correctAnswer": ["A", "B", "C"],
-            }
-        }
-    }

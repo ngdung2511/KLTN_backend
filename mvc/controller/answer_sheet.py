@@ -1,7 +1,7 @@
-from fastapi import APIRouter, status, UploadFile, File
+from fastapi import APIRouter, Form, status, UploadFile, File
 from ..model.upload import upload_photo
 from ..model import answer_sheet
-from ..view.answer_sheet import AnswerSheetSchema, ScoreRequest, QuickScoringRequest
+from ..view.answer_sheet import AnswerSheetSchema, ScoreRequest
 from typing import List
 import base64
 import anthropic
@@ -43,10 +43,12 @@ async def score_answer_sheets(score_request: ScoreRequest):
     return answer_sheet.score_answer_sheets(score_request.answerSheetId, score_request.testId)
 
 @router.post("/quick_score")
-async def quick_score(quick_score_request: QuickScoringRequest):
+async def quick_score(answerSheet: UploadFile = File(...), correctAnswer: str = Form(...)):
     # change image to base64
-    content = await quick_score_request.answerSheet.read()
+    content = await answerSheet.read()
+    
     encoded_string = base64.b64encode(content).decode("utf-8")
+    correctAnswer_processed = [x.strip().upper() for x in correctAnswer.split(",")]
 
     list_answer = answer_sheet.detect_answer_sheet(encoded_string)
-    return answer_sheet.quick_score(list_answer, quick_score_request.correctAnswer)
+    return answer_sheet.quick_score(list_answer, correctAnswer_processed)
