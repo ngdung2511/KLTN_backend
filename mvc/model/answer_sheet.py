@@ -161,6 +161,7 @@ def quick_score(student_answers: List[str], correct_answers: List[str]):
                 is_correct = student_answer == correct_answer[0]
 
         graded_answers.append({
+            "questionIndex": question_idx,
             "studentAnswers": student_answer,
             "correctAnswer": correct_answer,
             "correct": is_correct,
