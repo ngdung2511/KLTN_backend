@@ -45,3 +45,4 @@ class AnswerSheetSchema(BaseModel):
 class ScoreRequest(BaseModel):
     answerSheetId: List[Annotated[str, BeforeValidator(str)]]
     testId: Annotated[str, BeforeValidator(str)]
+    gradedBy: Optional[Annotated[str, BeforeValidator(str)]] = Field(default = "system")

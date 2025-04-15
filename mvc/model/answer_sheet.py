@@ -15,6 +15,8 @@ db = client["mcq_grading_system"]
 answer_sheet_collection = db["answer_sheet"]
 test_collection = db["tests"]
 question_collection = db["questions"]
+grading_results_collection = db["grading_results"]
+grading_history_collection = db["grading_history"]
 prompt = open("mvc/model/prompt.txt", "r", encoding="utf-8").read()
 client_llm = anthropic.Anthropic()
 
@@ -91,10 +93,8 @@ def grade_answers(correct_answers, student_answers, answer_sheet_id) -> Dict[str
         is_correct = False
         if correct_answer:
             if isinstance(student_answer['answer'], list):  # If student has multiple answers (e.g., B, C)
-                print('list')
                 is_correct = set(student_answer['answer']) == set(correct_answer)
             else:  # If student has only one answer (e.g., B)
-                print('single', student_answer['answer'] == correct_answer[0])
                 is_correct = student_answer['answer'] == correct_answer[0]
 
         graded_answers.append({
@@ -121,7 +121,7 @@ def grade_answers(correct_answers, student_answers, answer_sheet_id) -> Dict[str
         "percentage": (score / total_questions) * 100 if total_questions > 0 else 0
     }
 
-def score_answer_sheets(answer_sheet_ids: List[str], test_id: str):
+def score_answer_sheets(answer_sheet_ids: List[str], test_id: str, graded_by: str = "system"):
     testObj = get_test(test_id)
     if not testObj:
         raise ValueError("Test not found")
@@ -137,10 +137,21 @@ def score_answer_sheets(answer_sheet_ids: List[str], test_id: str):
 
         grading_result = grade_answers(correct_answers, student_answers, answer_sheet_id)
         grading_results.append(copy.deepcopy(grading_result))
+        grading_result['testId'] = test_id
+
+        grading_results_collection.insert_one(grading_result)  # Store grading result in the database
+
+        grading_result.pop("testId")
         grading_result.pop("answer_sheet_id")
         grading_result.pop("gradedAnswers")
 
         answer_sheet_collection.update_one({"_id": ObjectId(answer_sheet_id)}, {"$set": {"gradingResults": grading_results, "dateGraded": datetime.now(), "isGraded": True, "testId": test_id}})
+    grading_history_collection.insert_one({
+        "testId": test_id,
+        "gradingResults": grading_results,
+        "gradeAt": datetime.now(),
+        "gradeBy": graded_by,
+    })
     return {"message": "Answer sheets graded successfully", "results": grading_results}
 
 

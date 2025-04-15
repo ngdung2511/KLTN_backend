@@ -4,9 +4,6 @@ from ..model import answer_sheet
 from ..view.answer_sheet import AnswerSheetSchema, ScoreRequest
 from typing import List
 import base64
-import anthropic
-import ast
-import json
 
 router = APIRouter(prefix="/answer_sheet", tags=["Answer Sheet"])
 
@@ -40,7 +37,7 @@ async def list_answer_sheets():
 
 @router.post("/score", status_code=status.HTTP_201_CREATED)
 async def score_answer_sheets(score_request: ScoreRequest):
-    return answer_sheet.score_answer_sheets(score_request.answerSheetId, score_request.testId)
+    return answer_sheet.score_answer_sheets(score_request.answerSheetId, score_request.testId, score_request.gradedBy)
 
 @router.post("/quick_score")
 async def quick_score(answerSheet: UploadFile = File(...), correctAnswer: str = Form(...)):
