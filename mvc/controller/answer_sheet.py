@@ -60,3 +60,11 @@ async def quick_score(answerSheet: UploadFile = File(...), correctAnswer: str = 
     id_ = answer_sheet.insert_answer_sheet(answer_sheet_data)
     if isinstance(id_, str):
         return answer_sheet.quick_score(list_answer, correctAnswer_processed, id_)
+    
+@router.get("/grading_history/{testId}")
+async def grading_history(testId: str):
+    return answer_sheet.get_grading_history(testId)
+
+@router.get("/grading_history_by_id/{historyId}")
+async def grading_history_detail(historyId: str):
+    return answer_sheet.get_grading_history_by_id(historyId)

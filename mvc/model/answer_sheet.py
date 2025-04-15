@@ -141,7 +141,13 @@ def score_answer_sheets(answer_sheet_ids: List[str], test_id: str, graded_by: st
         grading_results.append(copy.deepcopy(grading_result))
         grading_result['testId'] = test_id
         grading_result['isQuickScore'] = False
-        grading_results_collection.insert_one(grading_result)  # Store grading result in the database
+
+        # find answer sheet by id if not found, insert new answer sheet in result else update the answer sheet
+        found_grading_result = grading_results_collection.find_one({"answer_sheet_id": answer_sheet_id, "testId": test_id})
+        if found_grading_result:
+            grading_results_collection.update_one({"answer_sheet_id": answer_sheet_id, "testId": test_id}, {"$set": grading_result})  # Update grading result in the database
+        else:
+            grading_results_collection.insert_one(grading_result)  # Store grading result in the database
 
         grading_result.pop("testId")
         grading_result.pop("isQuickScore")
@@ -186,7 +192,7 @@ def quick_score(student_answers: List[str], correct_answers: List[str], id_: str
 
         if is_correct:
             score += 1
-    grading_results_collection.insert_one({
+    results = {
         "studentAnswers": student_answers,
         "correctAnswers": correct_answers,
         "score": score,
@@ -197,21 +203,15 @@ def quick_score(student_answers: List[str], correct_answers: List[str], id_: str
         "percentage": (score / total_questions) * 100 if total_questions > 0 else 0,
         "isQuickScore": True,
         "answer_sheet_id": id_
-    })
+    }
+    found_grading_result = grading_results_collection.find_one({"answer_sheet_id": id_, "isQuickScore": True})
+    if found_grading_result:
+        grading_results_collection.update_one({"answer_sheet_id": id_, "isQuickScore": True}, {"$set": results})
+    else:
+        grading_results_collection.insert_one(results)
 
     grading_history_collection.insert_one({
-        "gradingResults": [{
-            "studentAnswers": student_answers,
-            "correctAnswers": correct_answers,
-            "score": score,
-            "totalQuestions": total_questions,
-            "gradedAnswers": graded_answers,
-            "studentName": answer_sheet_collection.find_one({"_id": ObjectId(id_)})['studentName'],
-            "studentCode": answer_sheet_collection.find_one({"_id": ObjectId(id_)})['studentCode'],
-            "percentage": (score / total_questions) * 100 if total_questions > 0 else 0,
-            "isQuickScore": True,
-            "answer_sheet_id": id_
-        }],
+        "gradingResults": [results],
         "testId": None,
         "gradedBy": "system",
         "gradedAt": datetime.now(),
@@ -225,6 +225,23 @@ def quick_score(student_answers: List[str], correct_answers: List[str], id_: str
         "gradedAnswers": graded_answers,
         "percentage": (score / total_questions) * 100 if total_questions > 0 else 0
     }
+
+def get_grading_history(test_id: str):
+    grading_history = grading_history_collection.find({"testId": test_id})
+    grading_history_list = []
+    for item in grading_history:
+        item['_id'] = str(item['_id'])
+        grading_history_list.append(item)
+    return grading_history_list
+
+def get_grading_history_by_id(grading_history_id: str):
+    grading_history = grading_history_collection.find_one({"_id": ObjectId(grading_history_id)})
+    if grading_history:
+        grading_history['_id'] = str(grading_history['_id'])
+        return grading_history
+    else:
+        raise ValueError("Grading history not found")
+
 
 if __name__ == "__main__":
     student_answers = [{'questionIndex': 1, 'answer': ['A']}, {'questionIndex': 2, 'answer': ['B']}, {'questionIndex': 3, 'answer': ['C']}]
