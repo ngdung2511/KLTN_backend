@@ -46,6 +46,17 @@ async def quick_score(answerSheet: UploadFile = File(...), correctAnswer: str = 
     
     encoded_string = base64.b64encode(content).decode("utf-8")
     correctAnswer_processed = [x.strip().upper() for x in correctAnswer.split(",")]
+    
+    imageId = upload_photo(answerSheet)
 
     list_answer = answer_sheet.detect_answer_sheet(encoded_string)
-    return answer_sheet.quick_score(list_answer, correctAnswer_processed)
+    
+    await answerSheet.seek(0)
+    
+    filename = answerSheet.filename
+    studentName = filename.split(".")[0].split("_")[1]
+    studentCode = filename.split(".")[0].split("_")[0]
+    answer_sheet_data = AnswerSheetSchema(imageId=imageId['file_id'], studentName=studentName, studentCode=studentCode, detectedAnswers=list_answer)
+    id_ = answer_sheet.insert_answer_sheet(answer_sheet_data)
+    if isinstance(id_, str):
+        return answer_sheet.quick_score(list_answer, correctAnswer_processed, id_)

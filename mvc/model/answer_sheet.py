@@ -63,9 +63,11 @@ def detect_answer_sheet(encoded_string):
 
 def insert_answer_sheet(answer_sheet: Union[AnswerSheetSchema, List[AnswerSheetSchema]]):
     if isinstance(answer_sheet, list):
-        answer_sheet_collection.insert_many([answer_sheet.model_dump() for answer_sheet in answer_sheet])
+        ids = answer_sheet_collection.insert_many([answer_sheet.model_dump() for answer_sheet in answer_sheet]).inserted_ids
+        return [str(id_) for id_ in ids]
     else:
-        answer_sheet_collection.insert_one(answer_sheet.model_dump())
+        id_ = answer_sheet_collection.insert_one(answer_sheet.model_dump()).inserted_id
+        return str(id_)
 
 
 def get_all_answer_sheets():
@@ -138,10 +140,11 @@ def score_answer_sheets(answer_sheet_ids: List[str], test_id: str, graded_by: st
         grading_result = grade_answers(correct_answers, student_answers, answer_sheet_id)
         grading_results.append(copy.deepcopy(grading_result))
         grading_result['testId'] = test_id
-
+        grading_result['isQuickScore'] = False
         grading_results_collection.insert_one(grading_result)  # Store grading result in the database
 
         grading_result.pop("testId")
+        grading_result.pop("isQuickScore")
         grading_result.pop("answer_sheet_id")
         grading_result.pop("gradedAnswers")
 
@@ -149,13 +152,15 @@ def score_answer_sheets(answer_sheet_ids: List[str], test_id: str, graded_by: st
     grading_history_collection.insert_one({
         "testId": test_id,
         "gradingResults": grading_results,
-        "gradeAt": datetime.now(),
-        "gradeBy": graded_by,
+        "gradedBy": graded_by,
+        "gradedAt": datetime.now(),
+        "isQuickScore": False,
+        
     })
     return {"message": "Answer sheets graded successfully", "results": grading_results}
 
 
-def quick_score(student_answers: List[str], correct_answers: List[str]):
+def quick_score(student_answers: List[str], correct_answers: List[str], id_: str = None):
     score = 0
     graded_answers = []
     total_questions = len(correct_answers)
@@ -175,10 +180,44 @@ def quick_score(student_answers: List[str], correct_answers: List[str]):
             "studentAnswers": student_answer,
             "correctAnswer": correct_answer,
             "correct": is_correct,
+            "answer_sheet_id": id_
         })
 
         if is_correct:
             score += 1
+    grading_results_collection.insert_one({
+        "studentAnswers": student_answers,
+        "correctAnswers": correct_answers,
+        "score": score,
+        "studentName": answer_sheet_collection.find_one({"_id": ObjectId(id_)})['studentName'],
+        "studentCode": answer_sheet_collection.find_one({"_id": ObjectId(id_)})['studentCode'],
+        "totalQuestions": total_questions,
+        "gradedAnswers": graded_answers,
+        "percentage": (score / total_questions) * 100 if total_questions > 0 else 0,
+        "isQuickScore": True,
+        "answer_sheet_id": id_
+    })
+
+    grading_history_collection.insert_one({
+        "gradingResults": [{
+            "studentAnswers": student_answers,
+            "correctAnswers": correct_answers,
+            "score": score,
+            "totalQuestions": total_questions,
+            "gradedAnswers": graded_answers,
+            "studentName": answer_sheet_collection.find_one({"_id": ObjectId(id_)})['studentName'],
+            "studentCode": answer_sheet_collection.find_one({"_id": ObjectId(id_)})['studentCode'],
+            "percentage": (score / total_questions) * 100 if total_questions > 0 else 0,
+            "isQuickScore": True,
+            "answer_sheet_id": id_
+        }],
+        "testId": None,
+        "gradedBy": "system",
+        "gradedAt": datetime.now(),
+        "isQuickScore": True,
+    })
+        
+
     return {
         "score": score,
         "totalQuestions": total_questions,
