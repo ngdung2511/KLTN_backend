@@ -47,11 +47,12 @@ async def quick_score(answerSheet: UploadFile = File(...), correctAnswer: str = 
     encoded_string = base64.b64encode(content).decode("utf-8")
     correctAnswer_processed = [x.strip().upper() for x in correctAnswer.split(",")]
     
+    await answerSheet.seek(0)
+    
     imageId = upload_photo(answerSheet)
 
     list_answer = answer_sheet.detect_answer_sheet(encoded_string)
     
-    await answerSheet.seek(0)
     
     filename = answerSheet.filename
     studentName = filename.split(".")[0].split("_")[1]
@@ -65,6 +66,6 @@ async def quick_score(answerSheet: UploadFile = File(...), correctAnswer: str = 
 async def grading_history(testId: str):
     return answer_sheet.get_grading_history(testId)
 
-@router.get("/grading_history_by_id/{historyId}")
-async def grading_history_detail(historyId: str):
-    return answer_sheet.get_grading_history_by_id(historyId)
+@router.get("/grading_results_by_historyId/{historyId}")
+async def grading_results_by_historyId(historyId: str):
+    return answer_sheet.get_grading_results_by_historyId(historyId)

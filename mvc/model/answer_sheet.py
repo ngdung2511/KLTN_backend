@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import anthropic
 import ast
 import json
+from bson import ObjectId
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["mcq_grading_system"]
@@ -73,9 +74,7 @@ def insert_answer_sheet(answer_sheet: Union[AnswerSheetSchema, List[AnswerSheetS
 def get_all_answer_sheets():
     total = answer_sheet_collection.count_documents({})
     items = list(answer_sheet_collection.find())
-    for item in items:
-        item['_id'] = str(item['_id'])
-    return {"total": total, "items": items}
+    return {"total": total, "items": convert_objectids(items)}
 
 def grade_answers(correct_answers, student_answers, answer_sheet_id) -> Dict[str, Any]:
     score = 0
@@ -122,7 +121,16 @@ def grade_answers(correct_answers, student_answers, answer_sheet_id) -> Dict[str
         "gradedAnswers": graded_answers,
         "percentage": (score / total_questions) * 100 if total_questions > 0 else 0
     }
-
+# Convert any ObjectId fields in grading_results to strings before returning
+def convert_objectids(obj):
+    if isinstance(obj, list):
+        return [convert_objectids(i) for i in obj]
+    elif isinstance(obj, dict):
+        return {k: convert_objectids(v) for k, v in obj.items()}
+    elif isinstance(obj, ObjectId):
+        return str(obj)
+    else:
+        return obj
 def score_answer_sheets(answer_sheet_ids: List[str], test_id: str, graded_by: str = "system"):
     testObj = get_test(test_id)
     if not testObj:
@@ -138,32 +146,41 @@ def score_answer_sheets(answer_sheet_ids: List[str], test_id: str, graded_by: st
         student_answers = answer_sheet['detectedAnswers']
 
         grading_result = grade_answers(correct_answers, student_answers, answer_sheet_id)
-        grading_results.append(copy.deepcopy(grading_result))
         grading_result['testId'] = test_id
         grading_result['isQuickScore'] = False
+        grading_results.append(copy.deepcopy(grading_result))
 
-        # find answer sheet by id if not found, insert new answer sheet in result else update the answer sheet
-        found_grading_result = grading_results_collection.find_one({"answer_sheet_id": answer_sheet_id, "testId": test_id})
-        if found_grading_result:
-            grading_results_collection.update_one({"answer_sheet_id": answer_sheet_id, "testId": test_id}, {"$set": grading_result})  # Update grading result in the database
-        else:
-            grading_results_collection.insert_one(grading_result)  # Store grading result in the database
 
-        grading_result.pop("testId")
-        grading_result.pop("isQuickScore")
-        grading_result.pop("answer_sheet_id")
-        grading_result.pop("gradedAnswers")
-
-        answer_sheet_collection.update_one({"_id": ObjectId(answer_sheet_id)}, {"$set": {"gradingResults": grading_results, "dateGraded": datetime.now(), "isGraded": True, "testId": test_id}})
-    grading_history_collection.insert_one({
+    grading_history = {
         "testId": test_id,
         "gradingResults": grading_results,
         "gradedBy": graded_by,
         "gradedAt": datetime.now(),
         "isQuickScore": False,
-        
-    })
-    return {"message": "Answer sheets graded successfully", "results": grading_results}
+    }
+    grading_history_insert_result = grading_history_collection.insert_one(grading_history)
+    grading_history_id_str = str(grading_history_insert_result.inserted_id)
+
+    # Add gradingId to each grading result and update DB
+    for grading_result in grading_results:
+        grading_result["gradingId"] = grading_history_id_str
+        grading_results_collection.insert_one(grading_result)
+
+        answer_sheet_collection.update_one(
+            {"_id": ObjectId(grading_result.get("answer_sheet_id"))},
+            {"$set": {"gradingResults": grading_results, "dateGraded": datetime.now(), "isGraded": True, "testId": test_id}}
+        )
+
+    # Optionally, remove fields from grading_result before returning if you don't want to expose them
+    # for grading_result in grading_results:
+    #     grading_result.pop("testId", None)
+    #     grading_result.pop("isQuickScore", None)
+    #     grading_result.pop("answer_sheet_id", None)
+    #     grading_result.pop("gradedAnswers", None)
+
+
+
+    return {"message": "Answer sheets graded successfully", "results": convert_objectids(grading_results)}
 
 
 def quick_score(student_answers: List[str], correct_answers: List[str], id_: str = None):
@@ -231,16 +248,20 @@ def get_grading_history(test_id: str):
     grading_history_list = []
     for item in grading_history:
         item['_id'] = str(item['_id'])
+        item['testName'] = test_collection.find_one({"_id": ObjectId(test_id)})['title']
+        item['sheetCount'] = len(item['gradingResults'])
+
         grading_history_list.append(item)
     return grading_history_list
 
-def get_grading_history_by_id(grading_history_id: str):
-    grading_history = grading_history_collection.find_one({"_id": ObjectId(grading_history_id)})
-    if grading_history:
-        grading_history['_id'] = str(grading_history['_id'])
-        return grading_history
+def get_grading_results_by_historyId(grading_history_id: str):
+    grading_results = list(grading_results_collection.find({"gradingId": grading_history_id}))
+    if grading_results:
+        for result in grading_results:
+            result['_id'] = str(result['_id'])
+        return convert_objectids(grading_results)
     else:
-        raise ValueError("Grading history not found")
+        raise ValueError("Grading results not found")
 
 
 if __name__ == "__main__":

@@ -77,18 +77,23 @@ def search_question(category_id: List[str] = None, difficulty: List[str] = None,
     items = question_collection.aggregate(pipeline)
     return {"total": total, "items": [QuestionResponse(**item) for item in items]}
 
-def chat_question(question_id: str, chat_history: List[dict]):
-    question = question_collection.find_one({"_id": ObjectId(question_id)})
-    if not question:
-        return {"message": "Question not found"}
-    
-    system_prompt = "Bạn là giáo viên chuyên giải đáp thắc mắc của sinh viên về câu hỏi trong bài kiểm tra.\n"
-    system_prompt += f"Đây là câu hỏi: {question['content']}\n"
-    system_prompt += "Các lựa chọn:\n"
-    for key, value in question['lstOptions'].items():
-        system_prompt += f"{key}: {BeautifulSoup(value, 'html.parser').get_text()}\n"
+from typing import Optional
+from fastapi.responses import StreamingResponse
 
-    system_prompt += f"Đáp án đúng là: {', '.join(question['correctOptions'])}"
+def chat_question(question_id: Optional[str] = None, chat_history: List[dict] = []):
+    if question_id:
+        question = question_collection.find_one({"_id": ObjectId(question_id)})
+        if not question:
+            return {"message": "Question not found"}
+        
+        system_prompt = "Bạn là giáo viên đa lĩnh vực chuyên giải đáp thắc mắc của sinh viên về câu hỏi trong bài kiểm tra.\n"
+        system_prompt += f"Đây là câu hỏi: {question['content']}\n"
+        system_prompt += "Các lựa chọn:\n"
+        for key, value in question['lstOptions'].items():
+            system_prompt += f"{key}: {BeautifulSoup(value, 'html.parser').get_text()}\n"
+        system_prompt += f"Đáp án đúng là: {', '.join(question['correctOptions'])}"
+    else:
+        system_prompt = "Bạn là giáo viên đa lĩnh vực chuyên giải đáp thắc mắc của sinh viên về các câu hỏi kiểm tra. Hãy trả lời dựa trên lịch sử chat dưới đây."
 
     async def generator():
         with client.messages.stream(
@@ -100,6 +105,5 @@ def chat_question(question_id: str, chat_history: List[dict]):
         ) as stream:
             for text in stream.text_stream:
                 yield text
-
 
     return StreamingResponse(generator())
