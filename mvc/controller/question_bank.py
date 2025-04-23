@@ -52,3 +52,7 @@ async def import_file(file: UploadFile):
 @router.post("/chat")
 async def chat_question(chat_question_request: ChatQuestionRequest):
     return question_bank.chat_question(chat_question_request.question_id, chat_question_request.messages)
+
+@router.post("/difficulty_count")
+async def difficulty_count(category_ids: List[str] = None):
+    return question_bank.difficulty_count(category_ids)

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Form, status, UploadFile, File
+from fastapi import APIRouter, Form, Query, status, UploadFile, File
 from ..model.upload import upload_photo
 from ..model import answer_sheet
 from ..view.answer_sheet import AnswerSheetSchema, ScoreRequest
@@ -67,5 +67,5 @@ async def grading_history(testId: str):
     return answer_sheet.get_grading_history(testId)
 
 @router.get("/grading_results_by_historyId/{historyId}")
-async def grading_results_by_historyId(historyId: str):
-    return answer_sheet.get_grading_results_by_historyId(historyId)
+async def grading_results_by_historyId(historyId: str, search: str = Query(None)):
+    return answer_sheet.get_grading_results_by_historyId(historyId, search)

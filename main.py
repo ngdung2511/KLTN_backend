@@ -1,8 +1,16 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from .mvc.controller import question_bank, test_bank, category, answer_sheet
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# Add middleware to print request origins for debugging
+@app.middleware("http")
+async def log_request_origin(request: Request, call_next):
+    origin = request.headers.get("origin", "No origin")
+    print(f"Request from origin: {origin}")
+    response = await call_next(request)
+    return response
 
 app.add_middleware(
     CORSMiddleware,

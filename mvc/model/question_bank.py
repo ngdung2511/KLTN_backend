@@ -107,3 +107,34 @@ def chat_question(question_id: Optional[str] = None, chat_history: List[dict] = 
                 yield text
 
     return StreamingResponse(generator())
+
+def difficulty_count(category_ids: List[str] = None):
+    query = {"status": True}
+    if category_ids:
+        query["category_id"] = {"$in": category_ids}
+    
+    pipeline = [
+        {"$match": query},
+        {"$group": {
+            "_id": "$difficulty",
+            "count": {"$sum": 1}
+        }}
+    ]
+    
+    results = list(question_collection.aggregate(pipeline))
+    
+    # Format the results into a dictionary
+    counts = {
+        "Easy": 0,
+        "Medium": 0,
+        "Hard": 0,
+        "Total": 0
+    }
+    
+    for result in results:
+        difficulty = result["_id"]
+        count = result["count"]
+        counts[difficulty] = count
+        counts["Total"] += count
+    
+    return counts

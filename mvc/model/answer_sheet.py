@@ -254,14 +254,70 @@ def get_grading_history(test_id: str):
         grading_history_list.append(item)
     return grading_history_list
 
-def get_grading_results_by_historyId(grading_history_id: str):
+def get_grading_results_by_historyId(grading_history_id: str, search: str = None):
     grading_results = list(grading_results_collection.find({"gradingId": grading_history_id}))
     if grading_results:
         for result in grading_results:
             result['_id'] = str(result['_id'])
-        return convert_objectids(grading_results)
-    else:
-        raise ValueError("Grading results not found")
+    print('search', search)
+    if search:
+        search_lower = search.lower()
+        grading_results = [
+            result for result in grading_results
+            if search_lower in result.get('studentName', '').lower()
+            or search_lower in result.get('studentCode', '').lower()
+        ]
+
+    # --- Calculate statistics ---
+    scores = [result['score'] for result in grading_results]
+    average_score = sum(scores) / len(scores) if scores else 0
+    highest_score = max(scores) if scores else 0
+    lowest_score = min(scores) if scores else 0
+
+    # Count incorrect answers per question
+    question_incorrect_counts = {}
+    for result in grading_results:
+        for answer in result.get('gradedAnswers', []):
+            if not answer.get('correct', False):
+                qid = answer.get('questionId')
+                question_incorrect_counts[qid] = question_incorrect_counts.get(qid, 0) + 1
+
+    # Find the question with the most incorrect answers
+    most_incorrect_question_id = None
+    most_incorrect_count = 0
+    for qid, count in question_incorrect_counts.items():
+        if count > most_incorrect_count:
+            most_incorrect_question_id = qid
+            most_incorrect_count = count
+
+    # Find the question content with the most incorrect answers
+    most_incorrect_question_content = None
+    if most_incorrect_question_id:
+        for result in grading_results:
+            for idx, answer in enumerate(result.get('gradedAnswers', [])):
+                if answer.get('questionId') == most_incorrect_question_id:
+                    most_incorrect_question_content = answer.get('questionContent')
+                    most_incorrect_qindex = idx + 1
+                    break
+                if most_incorrect_question_content is not None:
+                    break
+
+    stats = {
+        "average_score": average_score,
+        "highest_score": highest_score,
+        "lowest_score": lowest_score,
+        "most_incorrect_question": {
+            "qIndex": most_incorrect_qindex,
+            "questionId": most_incorrect_question_id,
+            "incorrect_count": most_incorrect_count,
+            "questionContent": most_incorrect_question_content,
+            } if most_incorrect_question_id else None
+        }
+
+    return convert_objectids({
+        "results": grading_results,
+        "stats": stats
+    })     
 
 
 if __name__ == "__main__":
