@@ -51,3 +51,12 @@ class TestResponse(BaseModel):
     status: bool
     created_at: datetime
     updated_at: datetime
+
+class AnswerKeyItem(BaseModel):
+    qIndex: int
+    answer: list[str]
+
+class AnswerKeyRequest(BaseModel):
+    id: Optional[Annotated[str, BeforeValidator(str)]] = Field(alias="_id", default = None)
+    testName: str
+    lstKey: List[AnswerKeyItem]

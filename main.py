@@ -16,7 +16,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000", "http://192.168.2.19:3000"],  # Add your frontend URL here
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Explicitly specify allowed methods
+    allow_methods=["*"],
     allow_headers=["*"],
     max_age=3600,  # Cache preflight requests for 1 hour
 )

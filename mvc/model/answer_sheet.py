@@ -9,7 +9,10 @@ from bs4 import BeautifulSoup
 import anthropic
 import ast
 import json
-from bson import ObjectId
+import base64
+import cv2
+import numpy as np
+
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["mcq_grading_system"]
@@ -20,6 +23,154 @@ grading_results_collection = db["grading_results"]
 grading_history_collection = db["grading_history"]
 prompt = open("mvc/model/prompt.txt", "r", encoding="utf-8").read()
 client_llm = anthropic.Anthropic()
+
+
+def preprocess_image_simple_screen_viz(
+    encoded_string: str,
+    visualize: bool = True, # Set to False to disable screen visualization
+    output_format: str = ".jpg" # e.g., .jpg, .png
+) -> str | None:
+    """
+    Performs simple image preprocessing (grayscale, blur, threshold, contour)
+    and optionally displays visualization steps directly on screen using cv2.imshow().
+
+    Args:
+        encoded_string: Base64 encoded string of the input image.
+        visualize: If True, display intermediate images on screen. REQUIRES GUI.
+        output_format: The image format for the returned base64 string.
+
+    Returns:
+        Base64 encoded string of the processed (thresholded) image, or None on failure.
+
+    WARNING: 'visualize=True' uses cv2.imshow() which requires a GUI and blocks execution.
+             Only use for local debugging, not in headless/server environments.
+    """
+    windows_to_destroy = [] # Keep track of opened windows if visualizing
+
+    try:
+        # 1. Decode Base64 to Bytes
+        print("Step 1: Decoding Base64 string...")
+        try:
+            image_bytes = base64.b64decode(encoded_string)
+        except (base64.binascii.Error, ValueError) as e:
+            print(f"Error: Invalid Base64 string: {e}")
+            return None
+
+        # 2. Decode Bytes to OpenCV Image
+        print("Step 2: Decoding image bytes to OpenCV format...")
+        np_arr = np.frombuffer(image_bytes, np.uint8)
+        img_color = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+
+        if img_color is None:
+            print("Error: Failed to decode image bytes into OpenCV format.")
+            return None
+        print(f"   - Decoded image shape: {img_color.shape}")
+
+        # --- Visualization: Show Original ---
+        if visualize:
+            print("--> Visualizing: Original Image (Press any key in window to continue)")
+            window_name = "1 - Original Image"
+            cv2.imshow(window_name, img_color)
+            windows_to_destroy.append(window_name)
+            cv2.waitKey(0) # Wait indefinitely for a key press IN THE IMAGE WINDOW
+
+        # 3. Convert to Grayscale
+        print("Step 3: Converting to grayscale...")
+        gray = cv2.cvtColor(img_color, cv2.COLOR_BGR2GRAY)
+
+        # --- Visualization: Show Grayscale ---
+        if visualize:
+            print("--> Visualizing: Grayscale Image (Press any key in window to continue)")
+            window_name = "2 - Grayscale"
+            cv2.imshow(window_name, gray)
+            windows_to_destroy.append(window_name)
+            cv2.waitKey(0)
+
+        # 4. Apply Gaussian Blur
+        print("Step 4: Applying Gaussian Blur...")
+        blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+
+        # --- Visualization: Show Blurred ---
+        if visualize:
+            print("--> Visualizing: Blurred Image (Press any key in window to continue)")
+            window_name = "3 - Blurred"
+            cv2.imshow(window_name, blurred)
+            windows_to_destroy.append(window_name)
+            cv2.waitKey(0)
+
+        # 5. Apply Adaptive Thresholding
+        print("Step 5: Applying Adaptive Thresholding...")
+        thresh = cv2.adaptiveThreshold(
+            blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+            cv2.THRESH_BINARY_INV, 11, 2 # block_size=11, C=2
+        )
+
+        # --- Visualization: Show Thresholded ---
+        if visualize:
+            print("--> Visualizing: Thresholded Image (Press any key in window to continue)")
+            window_name = "4 - Thresholded"
+            cv2.imshow(window_name, thresh)
+            windows_to_destroy.append(window_name)
+            cv2.waitKey(0)
+
+        # # 6. Find Contours
+        # print("Step 6: Finding contours...")
+        # contours, hierarchy = cv2.findContours(
+        #     thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE # Use thresh.copy() if drawing modifies it
+        # )
+        # print(f"   - Found {len(contours)} contours.")
+
+        # # --- Visualization: Draw Contours ---
+        # if visualize:
+        #     print("--> Visualizing: Contours on Original (Press any key in window to continue)")
+        #     img_contours = img_color.copy() # Draw on a copy of the color image
+        #     cv2.drawContours(img_contours, contours, -1, (0, 255, 0), 2) # Draw all in green
+
+        #     # Optional: Highlight largest contour
+        #     if contours:
+        #          try:
+        #              largest_contour = max(contours, key=cv2.contourArea)
+        #              cv2.drawContours(img_contours, [largest_contour], -1, (0, 0, 255), 3) # Draw largest in red
+        #              print("   - Highlighted largest contour in red.")
+        #          except ValueError:
+        #              print("   - Could not determine largest contour (no contours?).")
+
+        #     window_name = "5 - Contours"
+        #     cv2.imshow(window_name, img_contours)
+        #     windows_to_destroy.append(window_name)
+        #     cv2.waitKey(0)
+
+
+        # 7. Prepare Output (Thresholded Image)
+        print("Step 7: Encoding processed (thresholded) image to Base64...")
+        success, processed_encoded_image = cv2.imencode(output_format, thresh)
+        if not success:
+            print(f"Error: Failed to encode processed image to {output_format}.")
+            return None
+
+        processed_base64 = base64.b64encode(processed_encoded_image.tobytes()).decode('utf-8')
+        print("   - Successfully processed image.")
+
+        return processed_base64
+
+    except cv2.error as e:
+        print(f"OpenCV Error during preprocessing: {e}")
+        return None
+    except Exception as e:
+        print(f"Unexpected error during preprocessing: {e}")
+        return None
+    finally:
+        # IMPORTANT: Close any OpenCV windows that were opened
+        if visualize and windows_to_destroy:
+            print("-> Destroying visualization windows.")
+            for window_name in windows_to_destroy:
+               try:
+                   cv2.destroyWindow(window_name)
+               except cv2.error: # Window might already be closed manually
+                   pass
+            # Add a tiny waitkey to ensure windows process the close event
+            cv2.waitKey(1)
+
 
 def detect_answer_sheet(encoded_string):
     message = client_llm.messages.create(
@@ -70,6 +221,23 @@ def insert_answer_sheet(answer_sheet: Union[AnswerSheetSchema, List[AnswerSheetS
         id_ = answer_sheet_collection.insert_one(answer_sheet.model_dump()).inserted_id
         return str(id_)
 
+def update_answer_sheet(answer_sheet_id: str, answers: list[dict]):
+    """
+    Update the detectedAnswers field for the answer sheet with the given ID.
+    Args:
+        answer_sheet_id (str): The ID of the answer sheet to update.
+        answers (list[dict]): List of answers with questionIndex and answer fields.
+    Returns:
+        dict: Result of the update operation.
+    """
+
+    result = answer_sheet_collection.update_one(
+        {"_id": ObjectId(answer_sheet_id)},
+        {"$set": {"detectedAnswers": answers, "updated_at": datetime.now()}}
+    )
+    if result.matched_count == 0:
+        return {"success": False, "message": f"Answer sheet with ID {answer_sheet_id} not found."}
+    return {"success": True, "message": "Answer sheet updated successfully."}
 
 def get_all_answer_sheets():
     total = answer_sheet_collection.count_documents({})

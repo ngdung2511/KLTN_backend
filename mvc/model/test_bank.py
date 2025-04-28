@@ -1,4 +1,5 @@
 from typing import List, Union
+from ..helpers.mongo import convert_objectid
 import pymongo
 from ..view.test_bank import TestRequest, TestResponse
 from ..view.category import Category
@@ -12,6 +13,7 @@ db = client["mcq_grading_system"]
 test_collection = db["tests"]
 question_collection = db["questions"]
 category_collection = db["categories"]
+answer_key_collection = db["answer_keys"]
 
 def insert_test(test: Union[TestRequest, List[TestRequest]]):
     result = None
@@ -101,3 +103,38 @@ def get_test(test_id: str):
         return None
     item = TestResponse(**item)
     return item
+
+def insert_answer_key(answer_key):
+    if hasattr(answer_key, 'model_dump'):
+        doc = answer_key.model_dump(by_alias=True, exclude_none=True)
+    else:
+        doc = dict(answer_key)
+    # Remove _id if present and None
+    if "_id" in doc and doc["_id"] is None:
+        del doc["_id"]
+    result = answer_key_collection.insert_one(doc)
+    return str(result.inserted_id)
+
+
+def get_answer_key(answer_key_id):
+    doc = answer_key_collection.find_one({"_id": ObjectId(answer_key_id)})
+    return doc
+
+
+def list_answer_keys():
+    docs = list(answer_key_collection.find())
+    return [convert_objectid(doc) for doc in docs]
+
+def update_answer_key(answer_key_id, answer_key_update):
+    update_doc = answer_key_update.model_dump(by_alias=True, exclude_none=True)
+    if "_id" in update_doc:
+        del update_doc["_id"]
+    result = answer_key_collection.update_one(
+        {"_id": ObjectId(answer_key_id)},
+        {"$set": update_doc}
+    )
+    return result.modified_count > 0
+
+def delete_answer_key(answer_key_id):
+    result = answer_key_collection.delete_one({"_id": ObjectId(answer_key_id)})
+    return result.deleted_count > 0
